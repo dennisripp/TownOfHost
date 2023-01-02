@@ -27,6 +27,10 @@ namespace TownOfHost
         [HarmonyPriority(2)]
         public static void Start_Prefix(MainMenuManager __instance)
         {
+
+            isChecked = true;
+            return;
+
             DeleteOldDLL();
             InfoPopup = UnityEngine.Object.Instantiate(Twitch.TwitchManager.Instance.TwitchPopup);
             InfoPopup.name = "InfoPopup";

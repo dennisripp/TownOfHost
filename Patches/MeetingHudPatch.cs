@@ -331,7 +331,20 @@ namespace TownOfHost
                 {
                     foreach (var pc in PlayerControl.AllPlayerControls)
                     {
-                        pc.RpcSetNameEx(pc.GetRealName(isMeeting: true));
+
+                        var role = pc.GetCustomRole();
+                        if (GameStates.IsInGame)
+                        {
+                            if (role.IsVanilla())
+                            {
+                                Utils.SendMessage(GetString("Message.NoDescription"), pc.PlayerId);
+                            }
+                            else
+                            {
+                                Utils.SendMessage("Your role is:\n" + GetString(role.ToString()) + GetString($"{role}InfoLong") + "\ntype /m to see your role again", pc.PlayerId);
+                            }
+                        }
+                        //pc.RpcSetNameEx(pc.GetRealName(isMeeting: true));
                     }
                     ChatUpdatePatch.DoBlockChat = false;
                 }, 3f, "SetName To Chat");

@@ -13,22 +13,22 @@ namespace TownOfHost
         public static bool Prefix(GameStartManager __instance)
         {
             // 定数設定による公開ルームブロック
-            if (!Main.AllowPublicRoom)
-            {
-                var message = GetString("DisabledByProgram");
-                Logger.Info(message, "MakePublicPatch");
-                Logger.SendInGame(message);
-                return false;
-            }
-            if (ModUpdater.isBroken || ModUpdater.hasUpdate)
-            {
-                var message = "";
-                if (ModUpdater.isBroken) message = GetString("ModBrokenMessage");
-                if (ModUpdater.hasUpdate) message = GetString("CanNotJoinPublicRoomNoLatest");
-                Logger.Info(message, "MakePublicPatch");
-                Logger.SendInGame(message);
-                return false;
-            }
+            //if (!Main.AllowPublicRoom)
+            //{
+            //    var message = GetString("DisabledByProgram");
+            //    Logger.Info(message, "MakePublicPatch");
+            //    Logger.SendInGame(message);
+            //    return false;
+            //}
+            //if (ModUpdater.isBroken || ModUpdater.hasUpdate)
+            //{
+            //    var message = "";
+            //    if (ModUpdater.isBroken) message = GetString("ModBrokenMessage");
+            //    if (ModUpdater.hasUpdate) message = GetString("CanNotJoinPublicRoomNoLatest");
+            //    Logger.Info(message, "MakePublicPatch");
+            //    Logger.SendInGame(message);
+            //    return false;
+            //}
             return true;
         }
     }
@@ -37,19 +37,19 @@ namespace TownOfHost
     {
         public static void Postfix(MMOnlineManager __instance)
         {
-            if (!(ModUpdater.hasUpdate || ModUpdater.isBroken)) return;
-            var obj = GameObject.Find("FindGameButton");
-            if (obj)
-            {
-                obj?.SetActive(false);
-                var parentObj = obj.transform.parent.gameObject;
-                var textObj = Object.Instantiate<TMPro.TextMeshPro>(obj.transform.FindChild("Text_TMP").GetComponent<TMPro.TextMeshPro>());
-                textObj.transform.position = new Vector3(1f, -0.3f, 0);
-                textObj.name = "CanNotJoinPublic";
-                var message = ModUpdater.isBroken ? $"<size=2>{Utils.ColorString(Color.red, GetString("ModBrokenMessage"))}</size>"
-                    : $"<size=2>{Utils.ColorString(Color.red, GetString("CanNotJoinPublicRoomNoLatest"))}</size>";
-                new LateTask(() => { textObj.text = message; }, 0.01f, "CanNotJoinPublic");
-            }
+            //if (!(ModUpdater.hasUpdate || ModUpdater.isBroken)) return;
+            //var obj = GameObject.Find("FindGameButton");
+            //if (obj)
+            //{
+            //    obj?.SetActive(false);
+            //    var parentObj = obj.transform.parent.gameObject;
+            //    var textObj = Object.Instantiate<TMPro.TextMeshPro>(obj.transform.FindChild("Text_TMP").GetComponent<TMPro.TextMeshPro>());
+            //    textObj.transform.position = new Vector3(1f, -0.3f, 0);
+            //    textObj.name = "CanNotJoinPublic";
+            //    var message = ModUpdater.isBroken ? $"<size=2>{Utils.ColorString(Color.red, GetString("ModBrokenMessage"))}</size>"
+            //        : $"<size=2>{Utils.ColorString(Color.red, GetString("CanNotJoinPublicRoomNoLatest"))}</size>";
+            //    new LateTask(() => { textObj.text = message; }, 0.01f, "CanNotJoinPublic");
+            //}
         }
     }
     [HarmonyPatch(typeof(SplashManager), nameof(SplashManager.Update))]

@@ -33,11 +33,11 @@ namespace TownOfHost
                         : $"<color={Main.ModColor}>{Main.HideName.Value}</color>";
 
                 // Make Public Button
-                if (ModUpdater.isBroken || ModUpdater.hasUpdate || !Main.AllowPublicRoom)
-                {
-                    __instance.MakePublicButton.color = Palette.DisabledClear;
-                    __instance.privatePublicText.color = Palette.DisabledClear;
-                }
+                //if (ModUpdater.isBroken || ModUpdater.hasUpdate || !Main.AllowPublicRoom)
+                //{
+                //    __instance.MakePublicButton.color = Palette.DisabledClear;
+                //    __instance.privatePublicText.color = Palette.DisabledClear;
+                //}
             }
         }
 

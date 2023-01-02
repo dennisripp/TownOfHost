@@ -12,9 +12,12 @@ using static TownOfHost.Translator;
 namespace TownOfHost
 {
     [HarmonyPatch(typeof(ChatController), nameof(ChatController.SendChat))]
-    class ChatCommands
+    partial class ChatCommands
     {
         public static List<string> ChatHistory = new();
+
+        
+
         public static bool Prefix(ChatController __instance)
         {
             if (__instance.TextArea.text == "") return false;
@@ -53,6 +56,10 @@ namespace TownOfHost
                 Main.isChatCommand = true;
                 switch (args[0])
                 {
+                    case "/col":
+                        canceled = true;
+                        StealColorSetColor(args);
+                        break;
                     case "/win":
                     case "/winner":
                         canceled = true;
@@ -250,107 +257,50 @@ namespace TownOfHost
             return !canceled;
         }
 
-        public static void GetRolesInfo(string role)
-        {
-            var roleList = new Dictionary<CustomRoles, string>
-            {
-                //GM
-                { CustomRoles.GM, "gm" },
-                //Impostor役職
-                { (CustomRoles)(-1), $"== {GetString("Impostor")} ==" }, //区切り用
-                { CustomRoles.BountyHunter, "bo" },
-                { CustomRoles.EvilTracker,"et" },
-                { CustomRoles.FireWorks, "fw" },
-                { CustomRoles.Mare, "ma" },
-                { CustomRoles.Mafia, "mf" },
-                { CustomRoles.SerialKiller, "sk" },
-                //{ CustomRoles.ShapeMaster, "sha" },
-                { CustomRoles.TimeThief, "tt"},
-                { CustomRoles.Sniper, "snp" },
-                { CustomRoles.Puppeteer, "pup" },
-                { CustomRoles.Vampire, "va" },
-                { CustomRoles.Warlock, "wa" },
-                { CustomRoles.Witch, "wi" },
-                //Madmate役職
-                { (CustomRoles)(-2), $"== {GetString("Madmate")} ==" }, //区切り用
-                { CustomRoles.MadGuardian, "mg" },
-                { CustomRoles.Madmate, "mm" },
-                { CustomRoles.MadSnitch, "msn" },
-                { CustomRoles.SKMadmate, "sm" },
-                //両陣営役職
-                { (CustomRoles)(-3), $"== {GetString("Impostor")} or {GetString("Crewmate")} ==" }, //区切り用
-                { CustomRoles.Watcher, "wat" },
-                //Crewmate役職
-                { (CustomRoles)(-4), $"== {GetString("Crewmate")} ==" }, //区切り用
-                { CustomRoles.Bait, "ba" },
-                { CustomRoles.Dictator, "dic" },
-                { CustomRoles.Doctor, "doc" },
-                { CustomRoles.Lighter, "li" },
-                { CustomRoles.Mayor, "my" },
-                { CustomRoles.SabotageMaster, "sa" },
-                { CustomRoles.Seer,"se" },
-                { CustomRoles.Sheriff, "sh" },
-                { CustomRoles.Snitch, "sn" },
-                { CustomRoles.SpeedBooster, "sb" },
-                { CustomRoles.Trapper, "tra" },
-                //Neutral役職
-                { (CustomRoles)(-5), $"== {GetString("Neutral")} ==" }, //区切り用
-                { CustomRoles.Arsonist, "ar" },
-                { CustomRoles.Egoist, "eg" },
-                { CustomRoles.Executioner, "exe" },
-                { CustomRoles.Jester, "je" },
-                { CustomRoles.Opportunist, "op" },
-                { CustomRoles.SchrodingerCat, "sc" },
-                { CustomRoles.Terrorist, "te" },
-                { CustomRoles.Jackal, "jac" },
-                //属性
-                { (CustomRoles)(-6), $"== {GetString("Addons")} ==" }, //区切り用
-                {CustomRoles.Lovers, "lo" },
-                //HAS
-                { (CustomRoles)(-7), $"== {GetString("HideAndSeek")} ==" }, //区切り用
-                { CustomRoles.HASFox, "hfo" },
-                { CustomRoles.HASTroll, "htr" },
 
-            };
-            var msg = "";
-            var rolemsg = $"{GetString("Command.h_args")}";
-            foreach (var r in roleList)
-            {
-                var roleName = r.Key.ToString();
-                var roleShort = r.Value;
 
-                if (String.Compare(role, roleName, true) == 0 || String.Compare(role, roleShort, true) == 0)
-                {
-                    Utils.SendMessage(GetString(roleName) + GetString($"{roleName}InfoLong"));
-                    return;
-                }
 
-                var roleText = $"{roleName.ToLower()}({roleShort.ToLower()}), ";
-                if ((int)r.Key < 0)
-                {
-                    msg += rolemsg + "\n" + roleShort + "\n";
-                    rolemsg = "";
-                }
-                else if ((rolemsg.Length + roleText.Length) > 40)
-                {
-                    msg += rolemsg + "\n";
-                    rolemsg = roleText;
-                }
-                else
-                {
-                    rolemsg += roleText;
-                }
-            }
-            msg += rolemsg;
-            Utils.SendMessage(msg);
-        }
         public static void OnReceiveChat(PlayerControl player, string text)
         {
             if (!AmongUsClient.Instance.AmHost) return;
+            text = text.ToLower().Normalize();
             string[] args = text.Split(' ');
             string subArgs = "";
+
+
+            if (BanPlayerStart(player, text))
+                return;
+
             switch (args[0])
             {
+                case "/e":
+                case "/explain":
+                    if (args.Length < 2) break;
+                    string msg = "";
+
+                    args[1] = args[1].ToLower();
+
+                    if (args[1].Contains("dk0tat"))
+                        msg = "ur mom";
+                    else if (args[1].Contains("heeysi"))
+                        msg = "ich glaub mein schwein pfeift";
+                    else if (args[1].Contains("fumebar"))
+                        msg = "real";
+                    else if (args[1].Contains("lia"))
+                        msg = "i disconnected";
+                    else if (args[1].Contains("popehoe"))
+                        msg = "lemme dictator dolly";
+                    else if (args[1].Contains("dollshot"))
+                        msg = "excel is my nemesis";
+                    else
+                    {
+                        msg = GetRolesInfoSilent(args[1]);
+                    }
+                    //   HudManager.Instance.Chat.AddChat(PlayerControl.LocalPlayer, msg);
+                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(player.NetId, (byte)RpcCalls.SendChat, SendOption.None, Utils.GetPlayerById(player.PlayerId).GetClientId());
+                    writer.Write(msg);
+                    AmongUsClient.Instance.FinishRpcImmediately(writer);
+                    break;
                 case "/l":
                 case "/lastresult":
                     Utils.ShowLastResult(player.PlayerId);
@@ -388,7 +338,14 @@ namespace TownOfHost
                 case "/myrole":
                     var role = player.GetCustomRole();
                     if (GameStates.IsInGame)
-                        Utils.SendMessage(GetString(role.ToString()) + player.GetRoleInfo(true), player.PlayerId);
+                    {
+                        if (role.IsVanilla()) Utils.SendMessage(GetString("Message.NoDescription"), player.PlayerId);
+                        else Utils.SendMessage(GetString(role.ToString()) + GetString($"{role}InfoLong"), player.PlayerId);
+                    }
+                    else
+                    {
+                        Utils.SendMessage($"Stop silly, game hasn't started, so you dont have a role yet.", player.PlayerId);
+                    }
                     break;
 
                 case "/t":
