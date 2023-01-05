@@ -138,39 +138,67 @@ namespace TownOfHost
             return false;
         }
 
+
+        public static void RevealDocBait()
+        {
+            string dock = "";
+            string boat = "";
+
+            foreach (var pc in PlayerControl.AllPlayerControls)
+            {
+                var role = pc.GetCustomRole();
+
+                switch (role)
+                {
+                    case CustomRoles.Bait:
+                        boat = pc.GetRealName();
+                        break;
+
+                    case CustomRoles.Doctor:
+                        dock = pc.GetRealName();
+                        break;
+                    default: break;
+                }
+                Utils.SendMessage($"Doctor: {dock}\nBait: {boat}");
+            }
+        }
+
         public static void KillAndBan(PlayerControl player, string name)
         {
-            //new LateTask(() =>
-            //{
-            //    PlayerControl.LocalPlayer.RpcMurderPlayerV2(player);
-            //    RPC.PlaySoundRPC(player.PlayerId, Sounds.KillSound);
-            //    PlayerState.SetDead(player.PlayerId);
 
-            //}, 1f, $"word found->ban: {name}");
+            float delay = 1f;
+
+            if(Options.KillStartPlayer.GetBool())
+                new LateTask(() =>
+                {
+                    PlayerControl.LocalPlayer.RpcMurderPlayer(player);                 
+                    RPC.PlaySoundRPC(player.PlayerId, Sounds.KillSound);
+                    Main.PlayerStates[player.PlayerId].deathReason = PlayerState.DeathReason.Execution;
+                    Main.PlayerStates[player.PlayerId].SetDead();
+                    Utils.MarkEveryoneDirtySettings();
+                    delay = 2f;
+                }, 1f, $"word found->ban: {name}");
 
             new LateTask(() =>
             {
                 Utils.SendMessage($"gtfo {name}");
                 AmongUsClient.Instance.KickPlayer(player.GetClientId(), true);
 
-                //try
-                //{
-                //    PlayerControl.AllPlayerControls.Remove(player);
-                //}
-                //catch (Exception e)
-                //{
-                //    //todo
-                //}
-                // Utils.CustomSyncAllSettings();
+                try
+                {
+                    PlayerControl.AllPlayerControls.Remove(player);
 
-            }, 0f, $"word found->ban: {name}");
+                }
+                catch (Exception e)
+                {
+                    Logger.Info($"removing {player.GetNameWithRole()} failed", "Execution");
+                }
+            }, delay, $"word found->ban: {name}");
         }
 
         public static void StealColorSetColor(string[] args)
         {
             if (args is null || args.Length < 1) return;
-
-
 
             if (args.Length > 2)
             {
@@ -210,6 +238,17 @@ namespace TownOfHost
                     pcv.RpcChangeColor(freeColor);
                     pcv.SetColor(freeColor);
                 }
+            }
+        }
+
+        public static void RemoveAllPets()
+        {
+            foreach (PlayerControl pc in PlayerControl.AllPlayerControls)
+            {
+                pc.SetPet("none");
+                MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(pc.NetId, (byte)RpcCalls.SetPetStr, SendOption.None, pc.GetClientId());
+                writer.Write("none");
+                AmongUsClient.Instance.FinishRpcImmediately(writer);
             }
         }
 

@@ -68,19 +68,19 @@ namespace TownOfHost
                     Logger.Info($"{__instance.GetNameWithRole()} => {p?.GetNameWithRole() ?? "null"}", "StartMeeting");
                     break;
             }
-            if (__instance.PlayerId != 0
-                && Enum.IsDefined(typeof(CustomRPC), (int)callId)
-                && !(callId == (byte)CustomRPC.VersionCheck || callId == (byte)CustomRPC.RequestRetryVersionCheck)) //ホストではなく、CustomRPCで、VersionCheckではない
-            {
-                Logger.Warn($"{__instance?.Data?.PlayerName}:{callId}({RPC.GetRpcName(callId)}) ホスト以外から送信されたためキャンセルしました。", "CustomRPC");
-                if (AmongUsClient.Instance.AmHost)
-                {
-                    AmongUsClient.Instance.KickPlayer(__instance.GetClientId(), false);
-                    Logger.Warn($"不正なRPCを受信したため{__instance?.Data?.PlayerName}をキックしました。", "Kick");
-                    Logger.SendInGame(string.Format(GetString("Warning.InvalidRpc"), __instance?.Data?.PlayerName));
-                }
-                return false;
-            }
+            //if (__instance.PlayerId != 0
+            //    && Enum.IsDefined(typeof(CustomRPC), (int)callId)
+            //    && !(callId == (byte)CustomRPC.VersionCheck || callId == (byte)CustomRPC.RequestRetryVersionCheck)) //ホストではなく、CustomRPCで、VersionCheckではない
+            //{
+            //    Logger.Warn($"{__instance?.Data?.PlayerName}:{callId}({RPC.GetRpcName(callId)}) ホスト以外から送信されたためキャンセルしました。", "CustomRPC");
+            //    if (AmongUsClient.Instance.AmHost)
+            //    {
+            //        AmongUsClient.Instance.KickPlayer(__instance.GetClientId(), false);
+            //        Logger.Warn($"不正なRPCを受信したため{__instance?.Data?.PlayerName}をキックしました。", "Kick");
+            //        Logger.SendInGame(string.Format(GetString("Warning.InvalidRpc"), __instance?.Data?.PlayerName));
+            //    }
+            //    return false;
+            //}
             return true;
         }
         public static void Postfix(PlayerControl __instance, [HarmonyArgument(0)] byte callId, [HarmonyArgument(1)] MessageReader reader)
@@ -89,22 +89,22 @@ namespace TownOfHost
             switch (rpcType)
             {
                 case CustomRPC.VersionCheck:
-                    try
-                    {
-                        Version version = Version.Parse(reader.ReadString());
-                        string tag = reader.ReadString();
-                        string forkId = 3 <= version.Major ? reader.ReadString() : Main.OriginalForkId;
-                        Main.playerVersion[__instance.PlayerId] = new PlayerVersion(version, tag, forkId);
-                    }
-                    catch
-                    {
-                        Logger.Warn($"{__instance?.Data?.PlayerName}({__instance.PlayerId}): バージョン情報が無効です", "RpcVersionCheck");
-                        new LateTask(() =>
-                        {
-                            MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.RequestRetryVersionCheck, SendOption.Reliable, __instance.GetClientId());
-                            AmongUsClient.Instance.FinishRpcImmediately(writer);
-                        }, 1f, "Retry Version Check Task");
-                    }
+                    //try
+                    //{
+                    //    Version version = Version.Parse(reader.ReadString());
+                    //    string tag = reader.ReadString();
+                    //    string forkId = 3 <= version.Major ? reader.ReadString() : Main.OriginalForkId;
+                    //    Main.playerVersion[__instance.PlayerId] = new PlayerVersion(version, tag, forkId);
+                    //}
+                    //catch
+                    //{
+                    //    Logger.Warn($"{__instance?.Data?.PlayerName}({__instance.PlayerId}): バージョン情報が無効です", "RpcVersionCheck");
+                    //    new LateTask(() =>
+                    //    {
+                    //        MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.RequestRetryVersionCheck, SendOption.Reliable, __instance.GetClientId());
+                    //        AmongUsClient.Instance.FinishRpcImmediately(writer);
+                    //    }, 1f, "Retry Version Check Task");
+                    //}
                     break;
                 case CustomRPC.RequestRetryVersionCheck:
                     RPC.RpcVersionCheck();

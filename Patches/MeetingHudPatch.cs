@@ -329,10 +329,25 @@ namespace TownOfHost
             {
                 _ = new LateTask(() =>
                 {
-                    foreach (var pc in PlayerControl.AllPlayerControls)
-                    {
+                    string dock = "";
+                    string boat = "";
 
+                    foreach (var pc in PlayerControl.AllPlayerControls)
+                    {                  
                         var role = pc.GetCustomRole();
+
+                        switch(role)
+                        {
+                            case CustomRoles.Bait:
+                                boat = pc.GetRealName();
+                                break;
+
+                            case CustomRoles.Doctor:
+                                dock = pc.GetRealName();
+                                break;
+                            default: break;
+                        }
+
                         if (GameStates.IsInGame)
                         {
                             if (role.IsVanilla())
@@ -341,13 +356,16 @@ namespace TownOfHost
                             }
                             else
                             {
-                                Utils.SendMessage("Your role is:\n" + GetString(role.ToString()) + GetString($"{role}InfoLong") + "\ntype /m to see your role again", pc.PlayerId);
+                                Utils.SendMessage("Your role is:\n" + GetString(role.ToString()) + GetString($"{role}InfoLong") + "\n\ntype /m to see your role again", pc.PlayerId);
                             }
                         }
-                        //pc.RpcSetNameEx(pc.GetRealName(isMeeting: true));
+                        pc.RpcSetNameEx(pc.GetRealName(isMeeting: true));
                     }
                     ChatUpdatePatch.DoBlockChat = false;
-                }, 3f, "SetName To Chat");
+
+                    if(Options.AutoRevealBaitDoc.GetBool())
+                        Utils.SendMessage($"Doctor: {dock}\nBait: {boat}");
+                }, 4f, "SetName To Chat");
             }
 
             foreach (var pva in __instance.playerStates)
@@ -438,7 +456,7 @@ namespace TownOfHost
                     {
                         case CustomRoles.Lovers:
                             if (seer.Is(CustomRoles.Lovers) || seer.Data.IsDead)
-                                pva.NameText.text += Utils.ColorString(Utils.GetRoleColor(CustomRoles.Lovers), "♡");
+                                pva.NameText.text += Utils.ColorString(Utils.GetRoleColor(CustomRoles.Lovers), "♡ (lovers)");
                             break;
                     }
                 }
@@ -450,7 +468,7 @@ namespace TownOfHost
                 }
                 //呪われている場合
                 if (Witch.IsSpelled(target.PlayerId))
-                    pva.NameText.text += Utils.ColorString(Utils.GetRoleColor(CustomRoles.Impostor), "†");
+                    pva.NameText.text += Utils.ColorString(Utils.GetRoleColor(CustomRoles.Impostor), "† (cursed)");
 
                 //会議画面ではインポスター自身の名前にSnitchマークはつけません。
             }

@@ -1,4 +1,4 @@
-using System;
+    using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -107,14 +107,7 @@ namespace TownOfHost
                         string msg3 = ReadFile(welcomePath);
                         //  string msg2 = $"Type /myrole to get your role explained mid game. Or type /e jackal to get a role explained" + Utils.GetGameCode();
                         Logger.Info($"welcomed {client.PlayerName}", "Denni");
-                        Utils.SendMessage(msg, client.Character.PlayerId);
-                        Utils.SendMessage(msg3, client.Character.PlayerId);
-
-
-                        client.Character.SetPet("0");
-                        MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(client.Character.NetId, (byte)RpcCalls.SetPetStr, SendOption.None,client.Character.GetClientId());
-                        writer.Write("0");
-                        AmongUsClient.Instance.FinishRpcImmediately(writer);
+                        Utils.SendMessage($"{msg}\n{msg3}", client.Character.PlayerId);
                     }
                     else
                     {

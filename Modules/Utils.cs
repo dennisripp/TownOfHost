@@ -335,6 +335,11 @@ namespace TownOfHost
                     switch (subRole)
                     {
                         case CustomRoles.Lovers:
+                            if (role == CustomRoles.Snitch || role == CustomRoles.Terrorist || role == CustomRoles.Bait)
+                            {
+                                hasTasks = true;
+                                return hasTasks;
+                            }
                             //ラバーズがクルー陣営の場合タスクを付与しない
                             if (role.IsCrewmate())
                                 hasTasks = false;
@@ -903,7 +908,7 @@ namespace TownOfHost
                             TargetMark += EvilTracker.GetTargetMark(seer, target);
 
                         //他人の役職とタスクは幽霊が他人の役職を見れるようになっていてかつ、seerが死んでいる場合のみ表示されます。それ以外の場合は空になります。
-                        string TargetRoleText = seer.Data.IsDead && Options.GhostCanSeeOtherRoles.GetBool() ? $"<size={fontSize}>{target.GetDisplayRoleName()}{TargetTaskText}</size>\r\n" : "";
+                        string TargetRoleText = seer.Data.IsDead && Options.GhostCanSeeOtherRoles.GetBool() && !Options.MeetingNameFixVanilla.GetBool() ? $"<size={fontSize}>{target.GetDisplayRoleName()}{TargetTaskText}</size>\r\n" : "";
 
                         if (target.Is(CustomRoles.GM))
                             TargetRoleText = $"<size={fontSize}>{target.GetDisplayRoleName()}</size>\r\n";

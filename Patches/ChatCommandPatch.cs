@@ -103,6 +103,16 @@ namespace TownOfHost
                                 break;
                         }
                         break;
+                    case "/bait":
+                    case "/boat":
+                        RevealDocBait();
+                        canceled = true;
+                        break;
+                    case "/p":
+                    case "/pet":
+                        canceled = true;
+                        RemoveAllPets();
+                        break;
 
                     case "/dis":
                         canceled = true;
@@ -241,6 +251,22 @@ namespace TownOfHost
                         if (args.Length < 2 || !int.TryParse(args[1], out int id2)) break;
                         Utils.GetPlayerById(id2)?.RpcMurderPlayer(Utils.GetPlayerById(id2));
                         break;
+                    case "/d":
+                    case "/dabtime":
+                    case "/dab":
+                        canceled = true;
+                        int fontSize = 2;
+
+                        string dab =
+                            $"<size={fontSize}>{Utils.ColorString(Utils.GetRoleColor(CustomRoles.Impostor), "IT'S DABTIME")}</size>\n"
+                            + $"<size={fontSize}>{Utils.ColorString(Utils.GetRoleColor(CustomRoles.Arsonist), "IT'S DABTIME")}</size>\n"
+                            + $"<size={fontSize}>{Utils.ColorString(Utils.GetRoleColor(CustomRoles.Sheriff), "IT'S DABTIME")}</size>\n"
+                            + $"<size={fontSize}>{Utils.ColorString(Utils.GetRoleColor(CustomRoles.Terrorist), "IT'S DABTIME")}</size>\n"
+                            + $"<size={fontSize}>{Utils.ColorString(Utils.GetRoleColor(CustomRoles.Jackal), "IT'S DABTIME")}</size>\n"
+                            + $"<size={fontSize}>{Utils.ColorString(Utils.GetRoleColor(CustomRoles.Executioner), "IT'S DABTIME")}</size>";
+
+                        Utils.SendMessage("" ,title:dab);
+                        break;
 
                     default:
                         Main.isChatCommand = false;
@@ -288,10 +314,10 @@ namespace TownOfHost
                         msg = "real";
                     else if (args[1].Contains("lia"))
                         msg = "i disconnected";
-                    else if (args[1].Contains("popehoe"))
+                    else if (args[1].Contains("pope"))
                         msg = "lemme dictator dolly";
                     else if (args[1].Contains("dollshot"))
-                        msg = "excel is my nemesis";
+                        msg = "kill pope";
                     else
                     {
                         msg = GetRolesInfoSilent(args[1]);
