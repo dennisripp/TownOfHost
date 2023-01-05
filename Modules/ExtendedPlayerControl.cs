@@ -31,6 +31,16 @@ namespace TownOfHost
                 AmongUsClient.Instance.FinishRpcImmediately(writer);
             }
         }
+
+        public static void RpcChangeColor(this PlayerControl player, int colorID)
+        {
+            MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(player.NetId, (byte)RpcCalls.SetColor, SendOption.None, -1);
+            writer.Write(colorID);
+
+            // writer.WritePacked(colorID);
+            AmongUsClient.Instance.FinishRpcImmediately(writer);
+        }
+
         public static void RpcSetCustomRole(byte PlayerId, CustomRoles role)
         {
             if (AmongUsClient.Instance.AmHost)

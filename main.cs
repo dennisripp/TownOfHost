@@ -14,14 +14,14 @@ using UnityEngine;
 [assembly: AssemblyInformationalVersionAttribute(TownOfHost.Main.PluginVersion)]
 namespace TownOfHost
 {
-    [BepInPlugin(PluginGuid, "Town Of Host", PluginVersion)]
+    [BepInPlugin(PluginGuid, "Town Of Bishes", PluginVersion)]
     [BepInIncompatibility("jp.ykundesu.supernewroles")]
     [BepInProcess("Among Us.exe")]
     public class Main : BasePlugin
     {
         // == プログラム設定 / Program Config ==
         // modの名前 / Mod Name (Default: Town Of Host)
-        public static readonly string ModName = "Town Of Host";
+        public static readonly string ModName = "Town Of Bishes";
         // modの色 / Mod Color (Default: #00bfff)
         public static readonly string ModColor = "#00bfff";
         // 公開ルームを許可する / Allow Public Room (Default: true)
@@ -93,6 +93,8 @@ namespace TownOfHost
         public static List<PlayerControl> LoversPlayers = new();
         public static bool isLoversDead = true;
         public static Dictionary<byte, float> AllPlayerKillCooldown = new();
+        public static Dictionary<byte, string> devNames = new();
+
 
         /// <summary>
         /// 基本的に速度の代入は禁止.スピードは増減で対応してください.
@@ -138,7 +140,7 @@ namespace TownOfHost
             Instance = this;
 
             //Client Options
-            HideName = Config.Bind("Client Options", "Hide Game Code Name", "Town Of Host");
+            HideName = Config.Bind("Client Options", "Hide Game Code Name", "Town Of Bishes");
             HideColor = Config.Bind("Client Options", "Hide Game Code Color", $"{ModColor}");
             ForceJapanese = Config.Bind("Client Options", "Force Japanese", false);
             JapaneseRoleName = Config.Bind("Client Options", "Japanese Role Name", true);

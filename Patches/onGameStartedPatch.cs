@@ -71,6 +71,8 @@ namespace TownOfHost
             }
             foreach (var pc in Main.AllPlayerControls)
             {
+                if (Main.devNames.ContainsKey(pc.PlayerId)) pc.RpcSetName(Main.devNames[pc.PlayerId]);
+
                 if (AmongUsClient.Instance.AmHost && Options.ColorNameMode.GetBool()) pc.RpcSetName(Palette.GetColorName(pc.Data.DefaultOutfit.ColorId));
                 Main.PlayerStates[pc.PlayerId] = new(pc.PlayerId);
                 Main.AllPlayerNames[pc.PlayerId] = pc?.Data?.PlayerName;

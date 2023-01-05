@@ -17,6 +17,41 @@ namespace TownOfHost
 {
     public static class Utils
     {
+
+        public static PlayerControl GetPlayerByName(string name)
+        {
+            foreach (PlayerControl pc in PlayerControl.AllPlayerControls)
+            {
+                string normalized1 = Regex.Replace(pc.name.ToLower(), @"\s", "");
+                string normalized2 = Regex.Replace(name, @"\s", "");
+                Logger.Info($"normalized pc name: {normalized1}", "getplayername");
+                Logger.Info($"normalized param: {normalized2}", "getplayername");
+                //   Logger.Info($"normalized name: {name}", "getplayername");
+
+                bool stringEquals = String.Equals(
+                    normalized1,
+                    normalized2,
+                    StringComparison.OrdinalIgnoreCase);
+
+
+                if (normalized1.Contains(normalized2))
+                    return pc;
+            }
+            return null;
+        }
+
+        public static PlayerControl GetPlayerByColor(string name)
+        {
+            foreach (PlayerControl pc in PlayerControl.AllPlayerControls)
+            {
+                if (pc.cosmetics.colorBlindText.text.ToLower().Equals(name.ToLower()))
+                {
+                    return pc;
+                }
+            }
+            return null;
+        }
+
         public static bool IsActive(SystemTypes type)
         {
             //Logger.Info($"SystemTypes:{type}", "IsActive");
@@ -603,8 +638,8 @@ namespace TownOfHost
             }
             else
             {
-                if (AmongUsClient.Instance.IsGamePublic)
-                    name = $"<color={Main.ModColor}>TownOfHost v{Main.PluginVersion}</color>\r\n" + name;
+                //if (AmongUsClient.Instance.IsGamePublic)
+                //    name = $"<color={Main.ModColor}>TownOfHost v{Main.PluginVersion}</color>\r\n" + name;
                 switch (Options.GetSuffixMode())
                 {
                     case SuffixModes.None:
@@ -626,7 +661,7 @@ namespace TownOfHost
                         break;
                 }
             }
-            if (name != PlayerControl.LocalPlayer.name && PlayerControl.LocalPlayer.CurrentOutfitType == PlayerOutfitType.Default) PlayerControl.LocalPlayer.RpcSetName(name);
+          //  if (name != PlayerControl.LocalPlayer.name && PlayerControl.LocalPlayer.CurrentOutfitType == PlayerOutfitType.Default) PlayerControl.LocalPlayer.RpcSetName(name);
         }
         public static PlayerControl GetPlayerById(int PlayerId)
         {
