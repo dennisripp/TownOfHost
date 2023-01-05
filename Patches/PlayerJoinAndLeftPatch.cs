@@ -74,8 +74,6 @@ namespace TownOfHost
                     tmp = File.ReadAllLines(path, Encoding.UTF8);
                 else
                     return defaultWelcomeString;
-
-
             }
             catch (Exception e)
             {
@@ -171,6 +169,26 @@ namespace TownOfHost
                         string dev = $"<size={fontSize}>{Utils.ColorString(Utils.GetRoleColor(CustomRoles.Doctor), "angry cyan")}</size>";
                         string name = rname + " " + dev;
                         client.Character.RpcSetName($"{Utils.ColorString(Utils.GetRoleColor(CustomRoles.Doctor), name)}");
+                    }
+                    if (client.FriendCode is "wisecoin#9682")
+                    {
+                        customTag = true;
+                        Main.devNames.Add(client.Character.PlayerId, rname);
+
+                        string fontSize = "1";
+                        string dev = $"<size={fontSize}>{Utils.ColorString(Utils.GetRoleColor(CustomRoles.SchrodingerCat), "bite")}</size>";
+                        string name = rname + " " + dev;
+                        client.Character.RpcSetName($"{Utils.ColorString(Utils.GetRoleColor(CustomRoles.SchrodingerCat), name)}");
+                    }
+                    if (client.FriendCode is "twirlysong#5280")
+                    {
+                        customTag = true;
+                        Main.devNames.Add(client.Character.PlayerId, rname);
+
+                        string fontSize = "1";
+                        string dev = $"<size={fontSize}>{Utils.ColorString(Utils.GetRoleColor(CustomRoles.Terrorist), "gambler")}</size>";
+                        string name = rname + " " + dev;
+                        client.Character.RpcSetName($"{Utils.ColorString(Utils.GetRoleColor(CustomRoles.Terrorist), name)}");
                     }
 
                     if (client.FriendCode is "glossybump#6710")

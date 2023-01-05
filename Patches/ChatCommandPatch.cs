@@ -246,6 +246,11 @@ namespace TownOfHost
                         Utils.GetPlayerById(id)?.RpcExileV2();
                         break;
 
+                    case "/tag":
+                        canceled = true;
+                        GiveNameTags();
+                        break;
+
                     case "/kill":
                         canceled = true;
                         if (args.Length < 2 || !int.TryParse(args[1], out int id2)) break;

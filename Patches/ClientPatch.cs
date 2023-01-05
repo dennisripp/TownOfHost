@@ -37,6 +37,10 @@ namespace TownOfHost
     {
         public static void Postfix(MMOnlineManager __instance)
         {
+
+            var obj = GameObject.Find("FindGameButton");
+                obj?.SetActive(true);
+
             //if (!(ModUpdater.hasUpdate || ModUpdater.isBroken)) return;
             //var obj = GameObject.Find("FindGameButton");
             //if (obj)
