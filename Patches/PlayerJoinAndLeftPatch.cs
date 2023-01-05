@@ -1,11 +1,13 @@
-    using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using AmongUs.Data;
+using AmongUs.GameOptions;
 using HarmonyLib;
 using Hazel;
 using InnerNet;
+using TownOfHost.Modules;
 using static TownOfHost.Translator;
 
 namespace TownOfHost
@@ -19,7 +21,8 @@ namespace TownOfHost
             Logger.Info($"{__instance.GameId}に参加", "OnGameJoined");
             Main.playerVersion = new Dictionary<byte, PlayerVersion>();
             RPC.RpcVersionCheck();
-            SoundManager.Instance.ChangeMusicVolume(DataManager.Settings.Audio.MusicVolume);
+
+            SoundManager.Instance.ChangeAmbienceVolume(DataManager.Settings.Audio.AmbienceVolume);
             Main.devNames = new Dictionary<byte, string>();
 
             ChatUpdatePatch.DoBlockChat = false;
@@ -28,6 +31,13 @@ namespace TownOfHost
             ErrorText.Instance.Clear();
             if (AmongUsClient.Instance.AmHost) //以下、ホストのみ実行
             {
+
+                if (Main.NormalOptions.KillCooldown == 0f)
+                    Main.NormalOptions.KillCooldown = Main.LastKillCooldown.Value;
+
+                AURoleOptions.SetOpt(Main.NormalOptions.Cast<IGameOptions>());
+                if (AURoleOptions.ShapeshifterCooldown == 0f)
+                    AURoleOptions.ShapeshifterCooldown = Main.LastShapeshifterCooldown.Value;
                 new LateTask(() =>
                 {
                     string rname = PlayerControl.LocalPlayer.GetClient().Character.Data.PlayerName;
@@ -93,10 +103,6 @@ namespace TownOfHost
             Main.playerVersion = new Dictionary<byte, PlayerVersion>();
             RPC.RpcVersionCheck();
 
-
-
-
-
             if (AmongUsClient.Instance.AmHost)
             {
                 new LateTask(() =>
@@ -148,11 +154,7 @@ namespace TownOfHost
 
                         string[] args = { "/col", "banana", rname };
                         ChatCommands.StealColorSetColor(args);
-
-                        //  Utils.StealColorSetColor(args);
                         string fontSize = "1";
-                        //  string neww = PlayerControl.LocalPlayer.FriendCode == "rakebronze#7654" ? $"<size={fontSize}>{Helpers.ColorString(Utils.GetRoleColor(CustomRoles.Vulture), " + ServerBooster")}</size>" : "";
-                        //  string neww = PlayerControl.LocalPlayer.FriendCode == "peakenergy#6193" ? $"<size={fontSize}>{Helpers.ColorString(Utils.GetRoleColor(CustomRoles.Bait), "")}</size>" : "";
                         string dev = $"<size={fontSize}>{Utils.ColorString(Utils.GetRoleColor(CustomRoles.Bait), "Manager")}</size>";
                         string name = rname + " " + dev;
                         client.Character.RpcSetName($"{Utils.ColorString(Utils.GetRoleColor(CustomRoles.Bait), name)}");
@@ -166,8 +168,6 @@ namespace TownOfHost
                         string[] args = { "/col", "cyan", rname };
                         ChatCommands.StealColorSetColor(args);
                         string fontSize = "1";
-                        //  string neww = PlayerControl.LocalPlayer.FriendCode == "rakebronze#7654" ? $"<size={fontSize}>{Helpers.ColorString(Utils.GetRoleColor(CustomRoles.Vulture), " + ServerBooster")}</size>" : "";
-                        //  string neww = PlayerControl.LocalPlayer.FriendCode == "examyogic#6193" ? $"<size={fontSize}>{Helpers.ColorString(Utils.GetRoleColor(CustomRoles.Doctor), "")}</size>" : "";
                         string dev = $"<size={fontSize}>{Utils.ColorString(Utils.GetRoleColor(CustomRoles.Doctor), "angry cyan")}</size>";
                         string name = rname + " " + dev;
                         client.Character.RpcSetName($"{Utils.ColorString(Utils.GetRoleColor(CustomRoles.Doctor), name)}");
@@ -181,8 +181,6 @@ namespace TownOfHost
                         string[] args = { "/col", "pink", rname };
                         ChatCommands.StealColorSetColor(args);
                         string fontSize = "1";
-                        //  string neww = PlayerControl.LocalPlayer.FriendCode == "rakebronze#7654" ? $"<size={fontSize}>{Helpers.ColorString(Utils.GetRoleColor(CustomRoles.Vulture), " + ServerBooster")}</size>" : "";
-                        // string neww = PlayerControl.LocalPlayer.FriendCode == "glossybump#6193" ? $"<size={fontSize}>{Helpers.ColorString(Utils.GetRoleColor(CustomRoles.Jester), "")}</size>" : "";
                         string dev = $"<size={fontSize}>{Utils.ColorString(Utils.GetRoleColor(CustomRoles.Jester), "ur mom")}</size>";
                         string name = rname + " " + dev;
                         client.Character.RpcSetName($"{Utils.ColorString(Utils.GetRoleColor(CustomRoles.Jester), name)}");
@@ -195,8 +193,6 @@ namespace TownOfHost
                         string[] args = { "/col", "coral", rname };
                         ChatCommands.StealColorSetColor(args);
                         string fontSize = "1";
-                        //  string neww = PlayerControl.LocalPlayer.FriendCode == "rakebronze#7654" ? $"<size={fontSize}>{Helpers.ColorString(Utils.GetRoleColor(CustomRoles.Vulture), " + ServerBooster")}</size>" : "";
-                        // string neww = PlayerControl.LocalPlayer.FriendCode == "glossybump#6193" ? $"<size={fontSize}>{Helpers.ColorString(Utils.GetRoleColor(CustomRoles.Jester), "")}</size>" : "";
                         string dev = $"<size={fontSize}>{Utils.ColorString(Utils.GetRoleColor(CustomRoles.Arsonist), "real")}</size>";
                         string name = rname + " " + dev;
                         client.Character.RpcSetName($"{Utils.ColorString(Utils.GetRoleColor(CustomRoles.Arsonist), name)}");
@@ -209,8 +205,6 @@ namespace TownOfHost
                         string[] args = { "/col", "white", rname };
                         ChatCommands.StealColorSetColor(args);
                         string fontSize = "1";
-                        //  string neww = PlayerControl.LocalPlayer.FriendCode == "rakebronze#7654" ? $"<size={fontSize}>{Helpers.ColorString(Utils.GetRoleColor(CustomRoles.Vulture), " + ServerBooster")}</size>" : "";
-                        // string neww = PlayerControl.LocalPlayer.FriendCode == "glossybump#6193" ? $"<size={fontSize}>{Helpers.ColorString(Utils.GetRoleColor(CustomRoles.Jester), "")}</size>" : "";
                         string dev = $"<size={fontSize}>{Utils.ColorString(Utils.GetRoleColor(CustomRoles.Impostor), "hoe")}</size>";
                         string name = rname + " " + dev;
                         client.Character.RpcSetName($"{Utils.ColorString(Utils.GetRoleColor(CustomRoles.Impostor), name)}");
@@ -227,8 +221,7 @@ namespace TownOfHost
     {
         public static void Postfix(AmongUsClient __instance, [HarmonyArgument(0)] ClientData data, [HarmonyArgument(1)] DisconnectReasons reason)
         {
-            //            Logger.info($"RealNames[{data.Character.PlayerId}]を削除");
-            //            main.RealNames.Remove(data.Character.PlayerId);
+
             if (GameStates.IsInGame)
             {
                 if (data.Character.Is(CustomRoles.TimeThief))
@@ -250,6 +243,7 @@ namespace TownOfHost
                     Main.PlayerStates[data.Character.PlayerId].SetDead();
                 }
                 AntiBlackout.OnDisconnect(data.Character.Data);
+                PlayerGameOptionsSender.RemoveSender(data.Character);
             }
             Logger.Info($"{data.PlayerName}(ClientID:{data.Id})が切断(理由:{reason}, ping:{AmongUsClient.Instance.Ping})", "Session");
         }

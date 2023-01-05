@@ -5,8 +5,8 @@ using System.Text;
 using AmongUs.GameOptions;
 using Hazel;
 using InnerNet;
-using UnityEngine;
 using TownOfHost.Modules;
+using UnityEngine;
 using static TownOfHost.Translator;
 
 namespace TownOfHost
@@ -100,7 +100,7 @@ namespace TownOfHost
         }
         public static void RpcSetNameEx(this PlayerControl player, string name)
         {
-            foreach (var seer in PlayerControl.AllPlayerControls)
+            foreach (var seer in Main.AllPlayerControls)
             {
                 Main.LastNotifyNames[(player.PlayerId, seer.PlayerId)] = name;
             }
@@ -171,20 +171,22 @@ namespace TownOfHost
                 sender.SendMessage();
             }
         }
-        public static void SetKillCooldown(this PlayerControl player, float time)
+        public static void SetKillCooldown(this PlayerControl player, float time = -1f)
         {
+            if (player == null) return;
             CustomRoles role = player.GetCustomRole();
-            if (!(role.IsImpostor() || player.IsNeutralKiller() || role is CustomRoles.Arsonist or CustomRoles.Sheriff)) return;
-            if (player.AmOwner)
+            if (!player.CanUseKillButton()) return;
+            if (time >= 0f)
             {
-                player.SetKillTimer(time);
+                Main.AllPlayerKillCooldown[player.PlayerId] = time * 2;
             }
             else
             {
-                Main.AllPlayerKillCooldown[player.PlayerId] = time * 2;
-                player.MarkDirtySettings();
-                player.RpcGuardAndKill();
+                Main.AllPlayerKillCooldown[player.PlayerId] *= 2;
             }
+            player.SyncSettings();
+            player.RpcGuardAndKill();
+            player.ResetKillCooldown();
         }
         public static void RpcSpecificMurderPlayer(this PlayerControl killer, PlayerControl target = null)
         {
@@ -264,6 +266,11 @@ namespace TownOfHost
         {
             PlayerGameOptionsSender.SetDirty(player.PlayerId);
         }
+        public static void SyncSettings(this PlayerControl player)
+        {
+            PlayerGameOptionsSender.SetDirty(player.PlayerId);
+            GameOptionsSender.SendAllGameOptions();
+        }
         public static TaskState GetPlayerTaskState(this PlayerControl player)
         {
             return Main.PlayerStates[player.PlayerId].GetTaskState();
@@ -287,7 +294,7 @@ namespace TownOfHost
             foreach (var role in SubRoles)
             {
                 if (role == CustomRoles.NotAssigned) continue;
-                sb.Append($" + {Utils.GetRoleName(role)}");
+                sb.Append($"{Utils.ColorString(Color.white, " + ")}{Utils.GetRoleName(role)}");
             }
 
             return sb.ToString();
@@ -361,6 +368,8 @@ namespace TownOfHost
         }
         public static bool CanUseKillButton(this PlayerControl pc)
         {
+            if (!pc.IsAlive() || pc.Data.Role.Role == RoleTypes.GuardianAngel) return false;
+
             return pc.GetCustomRole() switch
             {
                 CustomRoles.FireWorks => FireWorks.CanUseKillButton(pc),
@@ -370,6 +379,19 @@ namespace TownOfHost
                 CustomRoles.Sheriff => Sheriff.CanUseKillButton(pc.PlayerId),
                 CustomRoles.Arsonist => !pc.IsDouseDone(),
                 CustomRoles.Egoist or CustomRoles.Jackal => true,
+                _ => pc.Is(RoleType.Impostor),
+            };
+        }
+        public static bool CanUseImpostorVentButton(this PlayerControl pc)
+        {
+            if (!pc.IsAlive() || pc.Data.Role.Role == RoleTypes.GuardianAngel) return false;
+
+            return pc.GetCustomRole() switch
+            {
+                CustomRoles.Sheriff => false,
+                CustomRoles.Egoist => true,
+                CustomRoles.Jackal => Jackal.CanVent.GetBool(),
+                CustomRoles.Arsonist => pc.IsDouseDone(),
                 _ => pc.Is(RoleType.Impostor),
             };
         }
@@ -433,24 +455,6 @@ namespace TownOfHost
                 killer.MarkDirtySettings();
                 RPC.PlaySoundRPC(killer.PlayerId, Sounds.TaskComplete);
             }, Options.TrapperBlockMoveTime.GetFloat(), "Trapper BlockMove");
-        }
-        public static void CanUseImpostorVent(this PlayerControl player)
-        {
-            switch (player.GetCustomRole())
-            {
-                case CustomRoles.Sheriff:
-                    DestroyableSingleton<HudManager>.Instance.ImpostorVentButton.ToggleVisible(false);
-                    player.Data.Role.CanVent = false;
-                    return;
-                case CustomRoles.Arsonist:
-                    bool CanUse = player.IsDouseDone();
-                    DestroyableSingleton<HudManager>.Instance.ImpostorVentButton.ToggleVisible(CanUse && !player.Data.IsDead);
-                    player.Data.Role.CanVent = CanUse;
-                    return;
-                case CustomRoles.Jackal:
-                    Jackal.CanUseVent(player);
-                    return;
-            }
         }
         public static bool IsDouseDone(this PlayerControl player)
         {
@@ -583,12 +587,31 @@ namespace TownOfHost
             var killerId = Main.PlayerStates[target.PlayerId].GetRealKiller();
             return killerId == byte.MaxValue ? null : Utils.GetPlayerById(killerId);
         }
+        public static PlainShipRoom GetPlainShipRoom(this PlayerControl pc)
+        {
+            if (!pc.IsAlive()) return null;
+            var Rooms = ShipStatus.Instance.AllRooms;
+            if (Rooms == null) return null;
+            foreach (var room in Rooms)
+            {
+                if (!room.roomArea) continue;
+                if (pc.Collider.IsTouching(room.roomArea))
+                    return room;
+            }
+            return null;
+        }
 
         //汎用
         public static bool Is(this PlayerControl target, CustomRoles role) =>
             role > CustomRoles.NotAssigned ? target.GetCustomSubRoles().Contains(role) : target.GetCustomRole() == role;
         public static bool Is(this PlayerControl target, RoleType type) { return target.GetCustomRole().GetRoleType() == type; }
-        public static bool IsAlive(this PlayerControl target) { return target != null && !Main.PlayerStates[target.PlayerId].IsDead; }
+        public static bool IsAlive(this PlayerControl target)
+        {
+            //ロビーなら生きている
+            //targetがnullならば切断者なので生きていない
+            //targetがnullでなく取得できない場合は登録前なので生きているとする
+            return GameStates.IsLobby || (target != null && (!Main.PlayerStates.TryGetValue(target.PlayerId, out var ps) || !ps.IsDead));
+        }
 
     }
 }

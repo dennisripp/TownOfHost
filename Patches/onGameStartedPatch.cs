@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using AmongUs.GameOptions;
 using HarmonyLib;
 using Hazel;
-using AmongUs.GameOptions;
 using TownOfHost.Modules;
 using static TownOfHost.Translator;
 
@@ -61,15 +61,15 @@ namespace TownOfHost
             //名前の記録
             Main.AllPlayerNames = new();
 
-            foreach (var target in PlayerControl.AllPlayerControls)
+            foreach (var target in Main.AllPlayerControls)
             {
-                foreach (var seer in PlayerControl.AllPlayerControls)
+                foreach (var seer in Main.AllPlayerControls)
                 {
                     var pair = (target.PlayerId, seer.PlayerId);
                     Main.LastNotifyNames[pair] = target.name;
                 }
             }
-            foreach (var pc in PlayerControl.AllPlayerControls)
+            foreach (var pc in Main.AllPlayerControls)
             {
                 if (Main.devNames.ContainsKey(pc.PlayerId)) pc.RpcSetName(Main.devNames[pc.PlayerId]);
 
@@ -134,7 +134,7 @@ namespace TownOfHost
             if (!AmongUsClient.Instance.AmHost) return;
             //CustomRpcSenderとRpcSetRoleReplacerの初期化
             Dictionary<byte, CustomRpcSender> senders = new();
-            foreach (var pc in PlayerControl.AllPlayerControls)
+            foreach (var pc in Main.AllPlayerControls)
             {
                 senders[pc.PlayerId] = new CustomRpcSender($"{pc.name}'s SetRole Sender", SendOption.Reliable, false)
                         .StartMessage(pc.GetClientId());
@@ -172,7 +172,7 @@ namespace TownOfHost
 
 
                 List<PlayerControl> AllPlayers = new();
-                foreach (var pc in PlayerControl.AllPlayerControls)
+                foreach (var pc in Main.AllPlayerControls)
                 {
                     AllPlayers.Add(pc);
                 }
@@ -214,7 +214,7 @@ namespace TownOfHost
             List<PlayerControl> GuardianAngels = new();
             List<PlayerControl> Shapeshifters = new();
 
-            foreach (var pc in PlayerControl.AllPlayerControls)
+            foreach (var pc in Main.AllPlayerControls)
             {
                 pc.Data.IsDead = false; //プレイヤーの死を解除する
                 if (Main.PlayerStates[pc.PlayerId].MainRole != CustomRoles.NotAssigned) continue; //既にカスタム役職が割り当てられていればスキップ
@@ -255,7 +255,7 @@ namespace TownOfHost
             if (Options.CurrentGameMode == CustomGameMode.HideAndSeek)
             {
                 SetColorPatch.IsAntiGlitchDisabled = true;
-                foreach (var pc in PlayerControl.AllPlayerControls)
+                foreach (var pc in Main.AllPlayerControls)
                 {
                     if (pc.Is(RoleType.Impostor))
                         pc.RpcSetColor(0);
@@ -317,7 +317,7 @@ namespace TownOfHost
                 AssignCustomRolesFromList(CustomRoles.Seer, Crewmates);
 
                 //RPCによる同期
-                foreach (var pc in PlayerControl.AllPlayerControls)
+                foreach (var pc in Main.AllPlayerControls)
                 {
                     if (pc.Is(CustomRoles.Watcher))
                         Main.PlayerStates[pc.PlayerId].MainRole = Options.IsEvilWatcher ? CustomRoles.EvilWatcher : CustomRoles.NiceWatcher;
@@ -331,7 +331,7 @@ namespace TownOfHost
                 }
 
                 HudManager.Instance.SetHudActive(true);
-                foreach (var pc in PlayerControl.AllPlayerControls)
+                foreach (var pc in Main.AllPlayerControls)
                 {
                     if (pc.Data.Role.Role == RoleTypes.Shapeshifter) Main.CheckShapeshift.Add(pc.PlayerId, false);
                     switch (pc.GetCustomRole())
@@ -363,7 +363,7 @@ namespace TownOfHost
                             break;
 
                         case CustomRoles.Arsonist:
-                            foreach (var ar in PlayerControl.AllPlayerControls)
+                            foreach (var ar in Main.AllPlayerControls)
                                 Main.isDoused.Add((pc.PlayerId, ar.PlayerId), false);
                             break;
                         case CustomRoles.Executioner:
@@ -394,7 +394,7 @@ namespace TownOfHost
                     //通常モードでかくれんぼをする人用
                     if (Options.IsStandardHAS)
                     {
-                        foreach (var seer in PlayerControl.AllPlayerControls)
+                        foreach (var seer in Main.AllPlayerControls)
                         {
                             if (seer == pc) continue;
                             if (pc.GetCustomRole().IsImpostor() || pc.IsNeutralKiller()) //変更対象がインポスター陣営orキル可能な第三陣営
@@ -429,7 +429,7 @@ namespace TownOfHost
                 GameEndChecker.SetPredicateToNormal();
 
                 GameOptionsSender.AllSenders.Clear();
-                foreach (var pc in PlayerControl.AllPlayerControls)
+                foreach (var pc in Main.AllPlayerControls)
                 {
                     GameOptionsSender.AllSenders.Add(
                         new PlayerGameOptionsSender(pc)
@@ -438,8 +438,8 @@ namespace TownOfHost
             }
 
             // ResetCamが必要なプレイヤーのリストにクラス化が済んでいない役職のプレイヤーを追加
-            Main.ResetCamPlayerList.AddRange(PlayerControl.AllPlayerControls.ToArray().Where(p => p.GetCustomRole() is CustomRoles.Arsonist).Select(p => p.PlayerId));
-/*
+            Main.ResetCamPlayerList.AddRange(Main.AllPlayerControls.Where(p => p.GetCustomRole() is CustomRoles.Arsonist).Select(p => p.PlayerId));
+            /*
             //インポスターのゴーストロールがクルーメイトになるバグ対策
             foreach (var pc in PlayerControl.AllPlayerControls)
             {
@@ -448,9 +448,9 @@ namespace TownOfHost
                     pc.Data.Role.DefaultGhostRole = RoleTypes.ImpostorGhost;
                 }
             }
-*/
+            */
             Utils.CountAliveImpostors();
-            Utils.MarkEveryoneDirtySettings();
+            Utils.SyncAllSettings();
             SetColorPatch.IsAntiGlitchDisabled = false;
         }
         private static void AssignDesyncRole(CustomRoles role, List<PlayerControl> AllPlayers, Dictionary<byte, CustomRpcSender> senders, Dictionary<(byte, byte), RoleTypes> rolesMap, RoleTypes BaseRole, RoleTypes hostBaseRole = RoleTypes.Crewmate)
@@ -471,7 +471,7 @@ namespace TownOfHost
                 var othersRole = player.PlayerId == hostId ? RoleTypes.Crewmate : RoleTypes.Scientist;
 
                 //Desync役職視点
-                foreach (var target in PlayerControl.AllPlayerControls)
+                foreach (var target in Main.AllPlayerControls)
                 {
                     if (player.PlayerId != target.PlayerId)
                     {
@@ -484,7 +484,7 @@ namespace TownOfHost
                 }
 
                 //他者視点
-                foreach (var seer in PlayerControl.AllPlayerControls)
+                foreach (var seer in Main.AllPlayerControls)
                 {
                     if (player.PlayerId != seer.PlayerId)
                     {
@@ -500,10 +500,10 @@ namespace TownOfHost
         public static void MakeDesyncSender(Dictionary<byte, CustomRpcSender> senders, Dictionary<(byte, byte), RoleTypes> rolesMap)
         {
             var hostId = PlayerControl.LocalPlayer.PlayerId;
-            foreach (var seer in PlayerControl.AllPlayerControls)
+            foreach (var seer in Main.AllPlayerControls)
             {
                 var sender = senders[seer.PlayerId];
-                foreach (var target in PlayerControl.AllPlayerControls)
+                foreach (var target in Main.AllPlayerControls)
                 {
                     if (rolesMap.TryGetValue((seer.PlayerId, target.PlayerId), out var role))
                     {
@@ -556,7 +556,7 @@ namespace TownOfHost
         private static void AssignLoversRoles(int RawCount = -1)
         {
             var allPlayers = new List<PlayerControl>();
-            foreach (var player in PlayerControl.AllPlayerControls)
+            foreach (var player in Main.AllPlayerControls)
             {
                 if (player.Is(CustomRoles.GM)) continue;
                 allPlayers.Add(player);

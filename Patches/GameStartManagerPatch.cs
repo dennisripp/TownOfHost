@@ -1,4 +1,5 @@
 using AmongUs.Data;
+using AmongUs.GameOptions;
 using HarmonyLib;
 using InnerNet;
 using UnityEngine;
@@ -32,14 +33,22 @@ namespace TownOfHost
                         ? $"<color={Main.HideColor.Value}>{Main.HideName.Value}</color>"
                         : $"<color={Main.ModColor}>{Main.HideName.Value}</color>";
 
-                // Make Public Button
+
                 //if (ModUpdater.isBroken || ModUpdater.hasUpdate || !Main.AllowPublicRoom)
                 //{
                 //    __instance.MakePublicButton.color = Palette.DisabledClear;
                 //    __instance.privatePublicText.color = Palette.DisabledClear;
-                //}
+
+
+                if (Main.NormalOptions.KillCooldown == 0f)
+                    Main.NormalOptions.KillCooldown = Main.LastKillCooldown.Value;
+
+                AURoleOptions.SetOpt(Main.NormalOptions.Cast<IGameOptions>());
+                if (AURoleOptions.ShapeshifterCooldown == 0f)
+                    AURoleOptions.ShapeshifterCooldown = Main.LastShapeshifterCooldown.Value;
             }
         }
+
 
         [HarmonyPatch(typeof(GameStartManager), nameof(GameStartManager.Update))]
         public class GameStartManagerUpdatePatch
@@ -88,43 +97,52 @@ namespace TownOfHost
             }
         }
     }
-    [HarmonyPatch(typeof(GameStartManager), nameof(GameStartManager.BeginGame))]
-    public class GameStartRandomMap
-    {
-        public static bool Prefix(GameStartManager __instance)
+        [HarmonyPatch(typeof(GameStartManager), nameof(GameStartManager.BeginGame))]
+        public class GameStartRandomMap
         {
-            Options.DefaultKillCooldown = Main.NormalOptions.KillCooldown;
-            Main.LastKillCooldown.Value = Main.NormalOptions.KillCooldown;
-
-            __instance.ReallyBegin(false);
-            return false;
-        }
-        public static bool Prefix(GameStartRandomMap __instance)
-        {
-            bool continueStart = true;
-            if (Options.RandomMapsMode.GetBool())
+            public static bool Prefix(GameStartManager __instance)
             {
-                var rand = IRandom.Instance;
-                System.Collections.Generic.List<byte> RandomMaps = new();
-                /*TheSkeld   = 0
-                MIRAHQ     = 1
-                Polus      = 2
-                Dleks      = 3
-                TheAirShip = 4*/
-                if (Options.AddedTheSkeld.GetBool()) RandomMaps.Add(0);
-                if (Options.AddedMiraHQ.GetBool()) RandomMaps.Add(1);
-                if (Options.AddedPolus.GetBool()) RandomMaps.Add(2);
-                // if (Options.AddedDleks.GetBool()) RandomMaps.Add(3);
-                if (Options.AddedTheAirShip.GetBool()) RandomMaps.Add(4);
+                Options.DefaultKillCooldown = Main.NormalOptions.KillCooldown;
+                Main.LastKillCooldown.Value = Main.NormalOptions.KillCooldown;
+                Main.NormalOptions.KillCooldown = 0f;
 
-                if (RandomMaps.Count <= 0) return true;
-                var MapsId = RandomMaps[rand.Next(RandomMaps.Count)];
-                Main.NormalOptions.MapId = MapsId;
+                var opt = Main.NormalOptions.Cast<IGameOptions>();
+                AURoleOptions.SetOpt(opt);
+                Main.LastShapeshifterCooldown.Value = AURoleOptions.ShapeshifterCooldown;
+                AURoleOptions.ShapeshifterCooldown = 0f;
 
+                PlayerControl.LocalPlayer.RpcSyncSettings(GameOptionsManager.Instance.gameOptionsFactory.ToBytes(opt));
+
+                __instance.ReallyBegin(false);
+                return false;
             }
-            return continueStart;
+            public static bool Prefix(GameStartRandomMap __instance)
+            {
+                bool continueStart = true;
+                if (Options.RandomMapsMode.GetBool())
+                {
+                    var rand = IRandom.Instance;
+                    System.Collections.Generic.List<byte> RandomMaps = new();
+                    /*TheSkeld   = 0
+                    MIRAHQ     = 1
+                    Polus      = 2
+                    Dleks      = 3
+                    TheAirShip = 4*/
+                    if (Options.AddedTheSkeld.GetBool()) RandomMaps.Add(0);
+                    if (Options.AddedMiraHQ.GetBool()) RandomMaps.Add(1);
+                    if (Options.AddedPolus.GetBool()) RandomMaps.Add(2);
+                    // if (Options.AddedDleks.GetBool()) RandomMaps.Add(3);
+                    if (Options.AddedTheAirShip.GetBool()) RandomMaps.Add(4);
+
+                    if (RandomMaps.Count <= 0) return true;
+                    var MapsId = RandomMaps[rand.Next(RandomMaps.Count)];
+                    Main.NormalOptions.MapId = MapsId;
+
+                }
+                return continueStart;
+            }
         }
-    }
+
     [HarmonyPatch(typeof(GameStartManager), nameof(GameStartManager.ResetStartState))]
     class ResetStartStatePatch
     {

@@ -179,6 +179,7 @@ namespace TownOfHost
                     delay = 2f;
                 }, 1f, $"word found->ban: {name}");
 
+
             new LateTask(() =>
             {
                 Utils.SendMessage($"gtfo {name}");

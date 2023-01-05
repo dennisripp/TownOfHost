@@ -105,7 +105,7 @@ namespace TownOfHost
             catch (Exception ex)
             {
                 isBroken = true;
-                Logger.Error($"リリースのチェックに失敗しました。\n{ex}", "CheckRelease");
+                Logger.Error($"リリースのチェックに失敗しました。\n{ex}", "CheckRelease", false);
                 return false;
             }
             return true;
@@ -162,7 +162,7 @@ namespace TownOfHost
             }
             catch (Exception ex)
             {
-                Logger.Error($"ダウンロードに失敗しました。\n{ex}", "DownloadDLL");
+                Logger.Error($"ダウンロードに失敗しました。\n{ex}", "DownloadDLL", false);
                 ShowPopup(GetString("updateManually"), true);
                 return false;
             }
