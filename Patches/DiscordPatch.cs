@@ -49,8 +49,8 @@ namespace TownOfHost
                 if (player is null) player = PlayerControl.LocalPlayer;
 
                 if (player != null)
-                    if (player.cosmetics != null)
-                        name = player.cosmetics.name.RemoveHtmlTags().Split(" ")[0];
+                    if (player.GetRealName() != null)
+                        name = player.GetRealName().RemoveHtmlTags().Split(" ")[0];
 
                 string code = Utils.GetGameCode();
 

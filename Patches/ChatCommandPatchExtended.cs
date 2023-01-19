@@ -240,7 +240,7 @@ namespace TownOfHost
                     Main.devNames.TryAdd(client.Character.PlayerId, rname);
 
 
-                    string[] args = { "/col", "orange", rname };
+                    string[] args = { "/col", "tan", rname };
                     ChatCommands.StealColorSetColor(args);
                     string fontSize = "1";
                     string dev = $"<size={fontSize}>{Utils.ColorString(Utils.GetRoleColor(CustomRoles.Mayor), "kay")}</size>";
@@ -490,7 +490,6 @@ namespace TownOfHost
                 //target.RpcSetHatStr(hat);
 
                 int colorID = target.Data.DefaultOutfit.ColorId;
-              
 
                 target.SetHat(hat, colorID);
                 sender.AutoStartRpc(target.NetId, (byte)RpcCalls.SetHatStr)

@@ -48,42 +48,42 @@ namespace TownOfHost
         }
         private static void SendToFile(string text, LogLevel level = LogLevel.Info, string tag = "", bool escapeCRLF = true, int lineNumber = 0, string fileName = "")
         {
-            if (!isEnable || disableList.Contains(tag)) return;
-            var logger = Main.Logger;
-            string t = DateTime.Now.ToString("HH:mm:ss");
-            if (sendToGameList.Contains(tag) || isAlsoInGame) SendInGame($"[{tag}]{text}");
-            if (escapeCRLF)
-                text = text.Replace("\r", "\\r").Replace("\n", "\\n");
-            string log_text = $"[{t}][{tag}]{text}";
-            if (isDetail && DebugModeManager.AmDebugger)
-            {
-                StackFrame stack = new(2);
-                string className = stack.GetMethod().ReflectedType.Name;
-                string memberName = stack.GetMethod().Name;
-                log_text = $"[{t}][{className}.{memberName}({Path.GetFileName(fileName)}:{lineNumber})][{tag}]{text}";
-            }
-            switch (level)
-            {
-                case LogLevel.Info:
-                    logger.LogInfo(log_text);
-                    break;
-                case LogLevel.Warning:
-                    logger.LogWarning(log_text);
-                    break;
-                case LogLevel.Error:
-                    logger.LogError(log_text);
-                    break;
-                case LogLevel.Fatal:
-                    logger.LogFatal(log_text);
-                    break;
-                case LogLevel.Message:
-                    logger.LogMessage(log_text);
-                    break;
-                default:
-                    logger.LogWarning("Error:Invalid LogLevel");
-                    logger.LogInfo(log_text);
-                    break;
-            }
+            //if (!isEnable || disableList.Contains(tag)) return;
+            //var logger = Main.Logger;
+            //string t = DateTime.Now.ToString("HH:mm:ss");
+            //if (sendToGameList.Contains(tag) || isAlsoInGame) SendInGame($"[{tag}]{text}");
+            //if (escapeCRLF)
+            //    text = text.Replace("\r", "\\r").Replace("\n", "\\n");
+            //string log_text = $"[{t}][{tag}]{text}";
+            //if (isDetail && DebugModeManager.AmDebugger)
+            //{
+            //    StackFrame stack = new(2);
+            //    string className = stack.GetMethod().ReflectedType.Name;
+            //    string memberName = stack.GetMethod().Name;
+            //    log_text = $"[{t}][{className}.{memberName}({Path.GetFileName(fileName)}:{lineNumber})][{tag}]{text}";
+            //}
+            //switch (level)
+            //{
+            //    case LogLevel.Info:
+            //        logger.LogInfo(log_text);
+            //        break;
+            //    case LogLevel.Warning:
+            //        logger.LogWarning(log_text);
+            //        break;
+            //    case LogLevel.Error:
+            //        logger.LogError(log_text);
+            //        break;
+            //    case LogLevel.Fatal:
+            //        logger.LogFatal(log_text);
+            //        break;
+            //    case LogLevel.Message:
+            //        logger.LogMessage(log_text);
+            //        break;
+            //    default:
+            //        logger.LogWarning("Error:Invalid LogLevel");
+            //        logger.LogInfo(log_text);
+            //        break;
+            //}
         }
         public static void Info(string text, string tag, bool escapeCRLF = true, [CallerLineNumber] int lineNumber = 0, [CallerFilePath] string fileName = "") =>
             SendToFile(text, LogLevel.Info, tag, escapeCRLF, lineNumber, fileName);
