@@ -31,6 +31,8 @@ namespace TownOfHost
             ErrorText.Instance.Clear();
             if (AmongUsClient.Instance.AmHost) //以下、ホストのみ実行
             {
+                if (Options.AutoShareLobbyCode.GetBool())
+                    Utils.ExecuteDiscordBot(Utils.DiscordCommand.LOBBYSTART, Utils.GetLastResult());
 
                 if (Main.NormalOptions.KillCooldown == 0f)
                     Main.NormalOptions.KillCooldown = Main.LastKillCooldown.Value;
@@ -124,111 +126,8 @@ namespace TownOfHost
 
             new LateTask(() =>
             {
-                if (client.Character != null)
-                {
-                    string rname = client.Character.Data.PlayerName;
+                ChatCommands.NameTagFilter(client);
 
-                    bool customTag = false;
-                    // if (client.FriendCode is "peakenergy#6193")
-                    if (client.FriendCode is "rakebronze#7654")
-                    {
-                        Main.devNames.Add(client.Character.PlayerId, rname);
-                        string[] args = { "/col", "white", rname };
-                        ChatCommands.StealColorSetColor(args);
-                        customTag = true;
-                        string fontSize = "1";
-                        //  string neww = PlayerControl.LocalPlayer.FriendCode == "rakebronze#7654" ? $"<size={fontSize}>{Helpers.ColorString(Utils.GetRoleColor(CustomRoles.Vulture), " + ServerBooster")}</size>" : "";
-                        // string neww = PlayerControl.LocalPlayer.FriendCode == "rakebronze#7654" ? $"<size={fontSize}>{Helpers.ColorString(Utils.GetRoleColor(CustomRoles.Jackal), "")}</size>" : "";
-                        string dev = $"<size={fontSize}>{Utils.ColorString(Utils.GetRoleColor(CustomRoles.Jackal), "Dev")}</size>";
-                        string name = rname + " " + dev;
-                        client.Character.RpcSetName($"{Utils.ColorString(Utils.GetRoleColor(CustomRoles.Jackal), name)}");
-                    }
-
-                    if (client.FriendCode is "peakenergy#6193")
-                    {
-                        customTag = true;
-                        Main.devNames.Add(client.Character.PlayerId, rname);
-
-
-                        string[] args = { "/col", "banana", rname };
-                        ChatCommands.StealColorSetColor(args);
-                        string fontSize = "1";
-                        string dev = $"<size={fontSize}>{Utils.ColorString(Utils.GetRoleColor(CustomRoles.Bait), "Manager")}</size>";
-                        string name = rname + " " + dev;
-                        client.Character.RpcSetName($"{Utils.ColorString(Utils.GetRoleColor(CustomRoles.Bait), name)}");
-                    }
-
-                    if (client.FriendCode is "examyogic#1356")
-                    {
-                        customTag = true;
-                        Main.devNames.Add(client.Character.PlayerId, rname);
-
-                        string[] args = { "/col", "cyan", rname };
-                        ChatCommands.StealColorSetColor(args);
-                        string fontSize = "1";
-                        string dev = $"<size={fontSize}>{Utils.ColorString(Utils.GetRoleColor(CustomRoles.Doctor), "angry cyan")}</size>";
-                        string name = rname + " " + dev;
-                        client.Character.RpcSetName($"{Utils.ColorString(Utils.GetRoleColor(CustomRoles.Doctor), name)}");
-                    }
-                    if (client.FriendCode is "wisecoin#9682")
-                    {
-                        customTag = true;
-                        Main.devNames.Add(client.Character.PlayerId, rname);
-
-                        string fontSize = "1";
-                        string dev = $"<size={fontSize}>{Utils.ColorString(Utils.GetRoleColor(CustomRoles.SchrodingerCat), "bite")}</size>";
-                        string name = rname + " " + dev;
-                        client.Character.RpcSetName($"{Utils.ColorString(Utils.GetRoleColor(CustomRoles.SchrodingerCat), name)}");
-                    }
-                    if (client.FriendCode is "twirlysong#5280")
-                    {
-                        customTag = true;
-                        Main.devNames.Add(client.Character.PlayerId, rname);
-
-                        string fontSize = "1";
-                        string dev = $"<size={fontSize}>{Utils.ColorString(Utils.GetRoleColor(CustomRoles.Terrorist), "gambler")}</size>";
-                        string name = rname + " " + dev;
-                        client.Character.RpcSetName($"{Utils.ColorString(Utils.GetRoleColor(CustomRoles.Terrorist), name)}");
-                    }
-
-                    if (client.FriendCode is "glossybump#6710")
-                    {
-                        customTag = true;
-                        Main.devNames.Add(client.Character.PlayerId, rname);
-
-                        string[] args = { "/col", "pink", rname };
-                        ChatCommands.StealColorSetColor(args);
-                        string fontSize = "1";
-                        string dev = $"<size={fontSize}>{Utils.ColorString(Utils.GetRoleColor(CustomRoles.Jester), "ur mom")}</size>";
-                        string name = rname + " " + dev;
-                        client.Character.RpcSetName($"{Utils.ColorString(Utils.GetRoleColor(CustomRoles.Jester), name)}");
-                    }
-                    if (client.FriendCode is "mangoripe#5233")
-                    {
-                        customTag = true;
-                        Main.devNames.Add(client.Character.PlayerId, rname);
-
-                        string[] args = { "/col", "coral", rname };
-                        ChatCommands.StealColorSetColor(args);
-                        string fontSize = "1";
-                        string dev = $"<size={fontSize}>{Utils.ColorString(Utils.GetRoleColor(CustomRoles.Arsonist), "real")}</size>";
-                        string name = rname + " " + dev;
-                        client.Character.RpcSetName($"{Utils.ColorString(Utils.GetRoleColor(CustomRoles.Arsonist), name)}");
-                    }
-                    if (client.FriendCode is "halfpager#1131")
-                    {
-                        customTag = true;
-                        Main.devNames.Add(client.Character.PlayerId, rname);
-
-                        string[] args = { "/col", "white", rname };
-                        ChatCommands.StealColorSetColor(args);
-                        string fontSize = "1";
-                        string dev = $"<size={fontSize}>{Utils.ColorString(Utils.GetRoleColor(CustomRoles.Impostor), "hoe")}</size>";
-                        string name = rname + " " + dev;
-                        client.Character.RpcSetName($"{Utils.ColorString(Utils.GetRoleColor(CustomRoles.Impostor), name)}");
-                    }
-                }
-                //nice
             }, 3f, "Welcome Message & Name Check");
         }
     }

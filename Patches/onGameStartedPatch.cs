@@ -61,6 +61,9 @@ namespace TownOfHost
             //名前の記録
             Main.AllPlayerNames = new();
 
+            if (Options.AutoRemovePets.GetBool())
+                ChatCommands.RemoveAllPets();
+
             foreach (var target in Main.AllPlayerControls)
             {
                 foreach (var seer in Main.AllPlayerControls)
@@ -143,6 +146,11 @@ namespace TownOfHost
 
             //ウォッチャーの陣営抽選
             Options.SetWatcherTeam(Options.EvilWatcherChance.GetFloat());
+
+            if (AmongUsClient.Instance.AmHost && Options.AutoShareLobbyCode.GetBool()) //以下、ホストのみ実行
+            {
+                Utils.ExecuteDiscordBot(Utils.DiscordCommand.LOBBYSTARTED);
+            }
 
             if (Options.CurrentGameMode != CustomGameMode.HideAndSeek)
             {

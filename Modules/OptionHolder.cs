@@ -174,7 +174,9 @@ namespace TownOfHost
 
 
         //eigene
+        public static OptionItem AutoRemovePets;
         public static OptionItem AutoRevealBaitDoc;
+        public static OptionItem AutoShareLobbyCode;
         public static OptionItem MeetingNameFixVanilla;
         public static OptionItem KillStartPlayer;
 
@@ -653,18 +655,6 @@ namespace TownOfHost
                 .SetGameMode(CustomGameMode.All);
 
             // プリセット対象外
-            AutoDisplayLastResult = BooleanOptionItem.Create(1_000_000, "AutoDisplayLastResult", true, TabGroup.MainSettings, false)
-                .SetHeader(true)
-                .SetGameMode(CustomGameMode.All);
-            AutoRevealBaitDoc = BooleanOptionItem.Create(1_000_006, "AutoRevealBaitDoc", true, TabGroup.MainSettings, false)
-                .SetHeader(true)
-                .SetGameMode(CustomGameMode.All);
-            MeetingNameFixVanilla = BooleanOptionItem.Create(1_000_007, "MeetingNameFixVanilla", true, TabGroup.MainSettings, false)
-                .SetHeader(true)
-                .SetGameMode(CustomGameMode.All);
-            KillStartPlayer = BooleanOptionItem.Create(1_000_008, "KillStartPlayer", true, TabGroup.MainSettings, false)
-                .SetHeader(true)
-                .SetGameMode(CustomGameMode.All);
             SuffixMode = StringOptionItem.Create(1_000_001, "SuffixMode", suffixModes, 0, TabGroup.MainSettings, true)
                 .SetGameMode(CustomGameMode.All);
             HideGameSettings = BooleanOptionItem.Create(1_000_002, "HideGameSettings", false, TabGroup.MainSettings, false)
@@ -678,6 +668,24 @@ namespace TownOfHost
                 .RegisterUpdateValueEvent(
                     (object obj, OptionItem.UpdateValueEventArgs args) => IRandom.SetInstanceById(args.CurrentValue)
                 );
+            AutoDisplayLastResult = BooleanOptionItem.Create(1_000_000, "AutoDisplayLastResult", true, TabGroup.MainSettings, false)
+                .SetHeader(true)
+                .SetGameMode(CustomGameMode.All);
+            AutoShareLobbyCode = BooleanOptionItem.Create(1_000_010, "AutoShareLobbyCode", false, TabGroup.MainSettings, false)
+                .SetHeader(true)
+                .SetGameMode(CustomGameMode.All);
+            AutoRevealBaitDoc = BooleanOptionItem.Create(1_000_006, "AutoRevealBaitDoc", false, TabGroup.MainSettings, false)
+                .SetHeader(true)
+                .SetGameMode(CustomGameMode.All);
+            AutoRemovePets = BooleanOptionItem.Create(1_000_009, "AutoRemovePets", true, TabGroup.MainSettings, false)
+                .SetHeader(true)
+                .SetGameMode(CustomGameMode.All);
+            MeetingNameFixVanilla = BooleanOptionItem.Create(1_000_007, "MeetingNameFixVanilla", false, TabGroup.MainSettings, false)
+                .SetHeader(true)
+                .SetGameMode(CustomGameMode.All);
+            KillStartPlayer = BooleanOptionItem.Create(1_000_008, "KillStartPlayer", false, TabGroup.MainSettings, false)
+                .SetHeader(true)
+                .SetGameMode(CustomGameMode.All);
 
             DebugModeManager.SetupCustomOption();
 

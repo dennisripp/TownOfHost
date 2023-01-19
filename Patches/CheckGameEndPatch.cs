@@ -121,6 +121,12 @@ namespace TownOfHost
                 }
             }
 
+            if (AmongUsClient.Instance.AmHost && Options.AutoShareLobbyCode.GetBool()) //以下、ホストのみ実行
+            {
+                Utils.ExecuteDiscordBot(Utils.DiscordCommand.POSTENDNOTIFY);
+                Logger.Info("Game Ended", "INFO");
+            }
+
             // CustomWinnerHolderの情報の同期
             sender.StartRpc(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.EndGame);
             CustomWinnerHolder.WriteTo(sender.stream);

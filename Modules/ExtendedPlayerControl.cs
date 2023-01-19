@@ -41,6 +41,37 @@ namespace TownOfHost
             AmongUsClient.Instance.FinishRpcImmediately(writer);
         }
 
+        public static void RpcChangePet(this PlayerControl player, string petID = "pet_EmptyPet")
+        {
+            MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(player.NetId, (byte)RpcCalls.SetPetStr, SendOption.None, -1);
+            writer.Write(petID);
+            AmongUsClient.Instance.FinishRpcImmediately(writer);
+        }
+
+        public static void RpcSetVisorStr(this PlayerControl player, string petID )
+        {
+
+            MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(player.NetId, (byte)RpcCalls.SetHatStr, SendOption.None, -1);
+            writer.Write(petID);
+            AmongUsClient.Instance.FinishRpcImmediately(writer);
+        }
+
+        public static void RpcSetSkinStr(this PlayerControl player, string petID )
+        {
+
+            MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(player.NetId, (byte)RpcCalls.SetSkinStr, SendOption.None, -1);
+            writer.Write(petID);
+            AmongUsClient.Instance.FinishRpcImmediately(writer);
+        }
+
+        public static void RpcSetHatStr(this PlayerControl player, string petID )
+        {
+
+            MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(player.NetId, (byte)RpcCalls.SetVisorStr, SendOption.None, -1);
+            writer.Write(petID);
+            AmongUsClient.Instance.FinishRpcImmediately(writer);
+        }
+
         public static void RpcSetCustomRole(byte PlayerId, CustomRoles role)
         {
             if (AmongUsClient.Instance.AmHost)

@@ -15,7 +15,7 @@ using static TownOfHost.Translator;
 
 namespace TownOfHost
 {
-    public static class Utils
+    public static partial class Utils
     {
 
         public static PlayerControl GetPlayerByName(string name)

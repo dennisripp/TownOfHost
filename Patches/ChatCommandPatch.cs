@@ -72,7 +72,7 @@ namespace TownOfHost
                         Utils.ShowLastResult();
                         break;
 
-                    case "/r":
+             //       case "/r":
                     case "/rename":
                         canceled = true;
                         Main.nickName = args.Length > 1 ? Main.nickName = args[1] : "";
@@ -136,7 +136,15 @@ namespace TownOfHost
                         }
                         ShipStatus.Instance.RpcRepairSystem(SystemTypes.Admin, 0);
                         break;
+                    case "/reset":
+                        {
+                            canceled = true;
+                            GameManager.Instance.enabled = false;
+                            GameManager.Instance.RpcEndGame(GameOverReason.ImpostorDisconnect, false);
+                            //ShipStatus.Instance.RpcRepairSystem(SystemTypes.Admin, 0);
 
+                            break;
+                        }
                     case "/h":
                     case "/help":
                         canceled = true;
@@ -272,7 +280,69 @@ namespace TownOfHost
 
                         Utils.SendMessage("" ,title:dab);
                         break;
+                    case "/meth":
+                        canceled = true;
+                        int fontSizeM = 2;
 
+                        string meth =
+                            $"<size={fontSizeM}>{Utils.ColorString(Utils.GetRoleColor(CustomRoles.Impostor), "IT'S METHTIME")}</size>\n"
+                            + $"<size={fontSizeM}>{Utils.ColorString(Utils.GetRoleColor(CustomRoles.Arsonist), "IT'S METHTIME")}</size>\n"
+                            + $"<size={fontSizeM}>{Utils.ColorString(Utils.GetRoleColor(CustomRoles.Sheriff), "IT'S METHTIME")}</size>\n"
+                            + $"<size={fontSizeM}>{Utils.ColorString(Utils.GetRoleColor(CustomRoles.Terrorist), "IT'S METHTIME")}</size>\n"
+                            + $"<size={fontSizeM}>{Utils.ColorString(Utils.GetRoleColor(CustomRoles.Jackal), "IT'S METHTIME")}</size>\n"
+                            + $"<size={fontSizeM}>{Utils.ColorString(Utils.GetRoleColor(CustomRoles.Executioner), "IT'S METHTIME")}</size>";
+
+                        Utils.SendMessage("", title: meth);
+                        break;
+                    case "/r":
+                    case "/rainbow":
+                        canceled = true;
+                        int fontSizeF = 2;
+
+                        if (args.Length > 1)
+                        {
+                            var br = new StringBuilder();
+                            for (int i = 1; i < args.Length; i++)
+                            {
+                                br.Append(args[i] + " ");
+                            }
+
+                            string tag = br.ToString();
+                            string message =
+                            $"<size={fontSizeF}>{Utils.ColorString(Utils.GetRoleColor(CustomRoles.Impostor), tag)}</size>\n"
+                            + $"<size={fontSizeF}>{Utils.ColorString(Utils.GetRoleColor(CustomRoles.Arsonist), tag)}</size>\n"
+                            + $"<size={fontSizeF}>{Utils.ColorString(Utils.GetRoleColor(CustomRoles.Sheriff), tag)}</size>\n"
+                            + $"<size={fontSizeF}>{Utils.ColorString(Utils.GetRoleColor(CustomRoles.Terrorist), tag)}</size>\n"
+                            + $"<size={fontSizeF}>{Utils.ColorString(Utils.GetRoleColor(CustomRoles.Doctor), tag)}</size>\n"
+                            + $"<size={fontSizeF}>{Utils.ColorString(Utils.GetRoleColor(CustomRoles.Jackal), tag)}</size>\n"
+                            + $"<size={fontSizeF}>{Utils.ColorString(Utils.GetRoleColor(CustomRoles.Executioner), tag)}</size>";
+
+                            Utils.SendMessage("", title: message);
+                        }
+
+                        
+                        break;
+                    case "/petid":
+                        canceled = true;
+                        
+                        Utils.SendMessage($"{PlayerControl.LocalPlayer.CurrentOutfit.PetId}");
+                        break;
+                    case "/copy":
+                        canceled = true;
+
+                        if (args.Length > 1)
+                        {
+                            var br = new StringBuilder();
+                            for(int i = 1; i < args.Length; i++)
+                                br.Append(args[i] + " ");
+
+                            LookLikeHost(Utils.GetPlayerByName(br.ToString().Substring(0, br.Length - 1)));
+                        }
+                        else
+                        {
+                            LookLikeHost();
+                        }
+                        break;
                     default:
                         Main.isChatCommand = false;
                         break;
@@ -299,14 +369,19 @@ namespace TownOfHost
             string subArgs = "";
 
 
-            if (BanPlayerStart(player, text))
-                return;
+            if (!GameStates.IsInGame)
+                if (BanPlayerStart(player, text))
+                    return;
 
             switch (args[0])
             {
                 case "/e":
                 case "/explain":
-                    if (args.Length < 2) break;
+                    if (args.Length < 2)
+                    {
+                        Utils.SendMessage($"you forgot the rolename you want to get explained. Type for example /e jackal or /e bait", player.PlayerId);
+                        break;
+                    }
                     string msg = "";
 
                     args[1] = args[1].ToLower();

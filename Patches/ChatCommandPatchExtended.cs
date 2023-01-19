@@ -6,6 +6,7 @@ using System.Text;
 using Assets.CoreScripts;
 using HarmonyLib;
 using Hazel;
+using InnerNet;
 using UnityEngine;
 using static TownOfHost.Translator;
 
@@ -139,124 +140,216 @@ namespace TownOfHost
         }
 
 
+        public static void NameTagFilter(ClientData cli = null)
+        {
+            var client = cli;
+            if (client == null) return;
+            if (client.Character != null)
+            {
+                string rname = client.Character.GetRealName().RemoveHtmlTags().Split(" ")[0];
+
+                bool customTag = false;
+                // if (client.FriendCode is "peakenergy#6193")
+                if (client.FriendCode is "rakebronze#7654")
+                {
+
+                    Main.devNames.TryAdd(client.Character.PlayerId, rname);
+                    string[] args = { "/col", "white", rname };
+                    ChatCommands.StealColorSetColor(args);
+                    customTag = true;
+                    string fontSize = "1";
+                    string dev = $"<size={fontSize}>{Utils.ColorString(Utils.GetRoleColor(CustomRoles.Jackal), "Dev")}</size>";
+                    string name = rname + " " + dev;
+                    client.Character.RpcSetName($"{Utils.ColorString(Utils.GetRoleColor(CustomRoles.Jackal), name)}");
+                }
+
+                if (client.FriendCode is "peakenergy#6193")
+                {
+                    customTag = true;
+                    Main.devNames.TryAdd(client.Character.PlayerId, rname);
+
+
+                    string[] args = { "/col", "banana", rname };
+                    ChatCommands.StealColorSetColor(args);
+                    string fontSize = "1";
+                    string dev = $"<size={fontSize}>{Utils.ColorString(Utils.GetRoleColor(CustomRoles.Bait), "Manager")}</size>";
+                    string name = rname + " " + dev;
+                    client.Character.RpcSetName($"{Utils.ColorString(Utils.GetRoleColor(CustomRoles.Bait), name)}");
+                }
+                //rosie
+                if (client.FriendCode is "lollyideal#0881")
+                {
+                    customTag = true;
+                    Main.devNames.TryAdd(client.Character.PlayerId, rname);
+
+
+                    string[] args = { "/col", "rose", rname };
+                    ChatCommands.StealColorSetColor(args);
+                    string fontSize = "1";
+                    string dev = $"<size={fontSize}>{Utils.ColorString(Utils.GetRoleColor(CustomRoles.Lovers), "gotta catch 'em all")}</size>";
+                    string name = rname + " " + dev;
+                    client.Character.RpcSetName($"{Utils.ColorString(Utils.GetRoleColor(CustomRoles.Lovers), name)}");
+                }
+
+                //hippie
+                if (client.FriendCode is "rainyplum#8274")
+                {
+                    customTag = true;
+                    Main.devNames.TryAdd(client.Character.PlayerId, rname);
+
+
+                    string[] args = { "/col", "black", rname };
+                    ChatCommands.StealColorSetColor(args);
+                    string fontSize = "1";
+                    string dev = $"<size={fontSize}>{Utils.ColorString(Utils.GetRoleColor(CustomRoles.Executioner), "oreo")}</size>";
+                    string name = rname + " " + dev;
+                    client.Character.RpcSetName($"{Utils.ColorString(Utils.GetRoleColor(CustomRoles.Executioner), name)}");
+                }
+                //lasaga
+                if (client.FriendCode is "retrostag#0948")
+                {
+                    customTag = true;
+                    Main.devNames.TryAdd(client.Character.PlayerId, rname);
+            
+                    string fontSize = "1";
+                    string dev = $"<size={fontSize}>{Utils.ColorString(Utils.GetRoleColor(CustomRoles.BountyHunter), "buddy")}</size>";
+                    string name = rname + " " + dev;
+                    client.Character.RpcSetName($"{Utils.ColorString(Utils.GetRoleColor(CustomRoles.BountyHunter), name)}");
+                }
+
+
+                //jinzo
+                if (client.FriendCode is "openoctane#5653")
+                {
+                    customTag = true;
+                    Main.devNames.TryAdd(client.Character.PlayerId, rname);
+
+
+                    string[] args = { "/col", "orange", rname };
+                    ChatCommands.StealColorSetColor(args);
+                    string fontSize = "1";
+                    string dev = $"<size={fontSize}>{Utils.ColorString(Utils.GetRoleColor(CustomRoles.Arsonist), "chef")}</size>";
+                    string name = rname + " " + dev;
+                    client.Character.RpcSetName($"{Utils.ColorString(Utils.GetRoleColor(CustomRoles.Arsonist), name)}");
+                }
+
+                //kay
+                if (client.FriendCode is "tangystem#8068")
+                {
+                    customTag = true;
+                    Main.devNames.TryAdd(client.Character.PlayerId, rname);
+
+
+                    string[] args = { "/col", "orange", rname };
+                    ChatCommands.StealColorSetColor(args);
+                    string fontSize = "1";
+                    string dev = $"<size={fontSize}>{Utils.ColorString(Utils.GetRoleColor(CustomRoles.Mayor), "kay")}</size>";
+                    string name = rname + " " + dev;
+                    client.Character.RpcSetName($"{Utils.ColorString(Utils.GetRoleColor(CustomRoles.Mayor), name)}");
+                }
+
+                //dolly
+                if (client.FriendCode is "examyogic#1356")
+                {
+                    customTag = true;
+                    Main.devNames.TryAdd(client.Character.PlayerId, rname);
+
+                    string[] args = { "/col", "cyan", rname };
+                    ChatCommands.StealColorSetColor(args);
+                    string fontSize = "1";
+                    string dev = $"<size={fontSize}>{Utils.ColorString(Utils.GetRoleColor(CustomRoles.Doctor), "angry cyan")}</size>";
+                    string name = rname + " " + dev;
+                    client.Character.RpcSetName($"{Utils.ColorString(Utils.GetRoleColor(CustomRoles.Doctor), name)}");
+                }
+
+                //shork
+                if (client.FriendCode is "wisecoin#9682")
+                {
+                    customTag = true;
+                    Main.devNames.TryAdd(client.Character.PlayerId, rname);
+                    string[] args = { "/col", "gray", rname };
+                    ChatCommands.StealColorSetColor(args);
+                    string fontSize = "1";
+                    string dev = $"<size={fontSize}>{Utils.ColorString(Utils.GetRoleColor(CustomRoles.SchrodingerCat), "nado")}</size>";
+                    string name = rname + " " + dev;
+                    client.Character.RpcSetName($"{Utils.ColorString(Utils.GetRoleColor(CustomRoles.SchrodingerCat), name)}");
+                }
+
+                //zina
+                if (client.FriendCode is "twirlysong#5280")
+                {
+                    customTag = true;
+                    Main.devNames.TryAdd(client.Character.PlayerId, rname);
+                    string[] args = { "/col", "lime", rname };
+                    ChatCommands.StealColorSetColor(args);
+                    string fontSize = "1";
+                    string dev = $"<size={fontSize}>{Utils.ColorString(Utils.GetRoleColor(CustomRoles.Terrorist), "gambler")}</size>";
+                    string name = rname + " " + dev;
+                    client.Character.RpcSetName($"{Utils.ColorString(Utils.GetRoleColor(CustomRoles.Terrorist), name)}");
+                }
+
+                //deconda
+                if (client.FriendCode is "glossybump#6710")
+                {
+                    customTag = true;
+                    Main.devNames.TryAdd(client.Character.PlayerId, rname);
+
+                    string[] args = { "/col", "pink", rname };
+                    ChatCommands.StealColorSetColor(args);
+                    string fontSize = "1";
+                    string dev = $"<size={fontSize}>{Utils.ColorString(Utils.GetRoleColor(CustomRoles.Jester), "i ♡ ur mom")}</size>";
+                    string name = rname + " " + dev;
+                    client.Character.RpcSetName($"{Utils.ColorString(Utils.GetRoleColor(CustomRoles.Jester), name)}");
+                }
+
+                //fumi
+                if (client.FriendCode is "mangoripe#5233")
+                {
+                    customTag = true;
+                    Main.devNames.TryAdd(client.Character.PlayerId, rname);
+
+                    string[] args = { "/col", "coral", rname };
+                    ChatCommands.StealColorSetColor(args);
+                    string fontSize = "1";
+                    string dev = $"<size={fontSize}>{Utils.ColorString(Utils.GetRoleColor(CustomRoles.Arsonist), "real")}</size>";
+                    string name = rname + " " + dev;
+                    client.Character.RpcSetName($"{Utils.ColorString(Utils.GetRoleColor(CustomRoles.Arsonist), name)}");
+                }
+
+                //pope
+                if (client.FriendCode is "halfpager#1131")
+                {
+                    customTag = true;
+                    Main.devNames.TryAdd(client.Character.PlayerId, rname);
+                    string fontSize = "1";
+                    string dev = $"<size={fontSize}>{Utils.ColorString(Utils.GetRoleColor(CustomRoles.Impostor), "hoe")}</size>";
+                    string name = rname + " " + dev;
+                    client.Character.RpcSetName($"{Utils.ColorString(Utils.GetRoleColor(CustomRoles.Impostor), name)}");
+                }
+                if (client.FriendCode is "duehermit#6164")
+                {
+                    customTag = true;
+                    Main.devNames.TryAdd(client.Character.PlayerId, rname);
+
+                    string fontSize = "1";
+                    string dev = $"<size={fontSize}>{Utils.ColorString(Utils.GetRoleColor(CustomRoles.Impostor), "hoe")}</size>";
+                    string name = rname + " " + dev;
+                    client.Character.RpcSetName($"{Utils.ColorString(Utils.GetRoleColor(CustomRoles.Impostor), name)}");
+                }
+            }
+        }
+
 
         static void GiveNameTags()
         {
-
             new LateTask(() =>
             {
                 foreach (PlayerControl control in PlayerControl.AllPlayerControls)
                 {
-                    var client = control.GetClient();
-                    if (client.Character != null)
-                    {
-                        string rname = client.Character.GetRealName().RemoveHtmlTags().Split(" ")[0];
-
-                        bool customTag = false;
-                        // if (client.FriendCode is "peakenergy#6193")
-                        if (client.FriendCode is "rakebronze#7654")
-                        {
-
-                            Main.devNames.TryAdd(client.Character.PlayerId, rname);
-                            string[] args = { "/col", "white", rname };
-                            ChatCommands.StealColorSetColor(args);
-                            customTag = true;
-                            string fontSize = "1";
-                            string dev = $"<size={fontSize}>{Utils.ColorString(Utils.GetRoleColor(CustomRoles.Jackal), "Dev")}</size>";
-                            string name = rname + " " + dev;
-                            client.Character.RpcSetName($"{Utils.ColorString(Utils.GetRoleColor(CustomRoles.Jackal), name)}");
-                        }
-
-                        if (client.FriendCode is "peakenergy#6193")
-                        {
-                            customTag = true;
-                            Main.devNames.TryAdd(client.Character.PlayerId, rname);
-
-
-                            string[] args = { "/col", "banana", rname };
-                            ChatCommands.StealColorSetColor(args);
-                            string fontSize = "1";
-                            string dev = $"<size={fontSize}>{Utils.ColorString(Utils.GetRoleColor(CustomRoles.Bait), "Manager")}</size>";
-                            string name = rname + " " + dev;
-                            client.Character.RpcSetName($"{Utils.ColorString(Utils.GetRoleColor(CustomRoles.Bait), name)}");
-                        }
-
-                        if (client.FriendCode is "examyogic#1356")
-                        {
-                            customTag = true;
-                            Main.devNames.TryAdd(client.Character.PlayerId, rname);
-
-                            string[] args = { "/col", "cyan", rname };
-                            ChatCommands.StealColorSetColor(args);
-                            string fontSize = "1";
-                            string dev = $"<size={fontSize}>{Utils.ColorString(Utils.GetRoleColor(CustomRoles.Doctor), "angry cyan")}</size>";
-                            string name = rname + " " + dev;
-                            client.Character.RpcSetName($"{Utils.ColorString(Utils.GetRoleColor(CustomRoles.Doctor), name)}");
-                        }
-                        if (client.FriendCode is "wisecoin#9682")
-                        {
-                            customTag = true;
-                            Main.devNames.TryAdd(client.Character.PlayerId, rname);
-                            string[] args = { "/col", "gray", rname };
-                            ChatCommands.StealColorSetColor(args);
-                            string fontSize = "1";
-                            string dev = $"<size={fontSize}>{Utils.ColorString(Utils.GetRoleColor(CustomRoles.Terrorist), "bite")}</size>";
-                            string name = rname + " " + dev;
-                            client.Character.RpcSetName($"{Utils.ColorString(Utils.GetRoleColor(CustomRoles.Terrorist), name)}");
-                        }
-                        if (client.FriendCode is "twirlysong#5280")
-                        {
-                            customTag = true;
-                            Main.devNames.TryAdd(client.Character.PlayerId, rname);
-                            string[] args = { "/col", "lime", rname };
-                            ChatCommands.StealColorSetColor(args);
-                            string fontSize = "1";
-                            string dev = $"<size={fontSize}>{Utils.ColorString(Utils.GetRoleColor(CustomRoles.Doctor), "gambler")}</size>";
-                            string name = rname + " " + dev;
-                            client.Character.RpcSetName($"{Utils.ColorString(Utils.GetRoleColor(CustomRoles.Doctor), name)}");
-                        }
-
-                        if (client.FriendCode is "glossybump#6710")
-                        {
-                            customTag = true;
-                            Main.devNames.TryAdd(client.Character.PlayerId, rname);
-
-                            string[] args = { "/col", "pink", rname };
-                            ChatCommands.StealColorSetColor(args);
-                            string fontSize = "1";
-                            string dev = $"<size={fontSize}>{Utils.ColorString(Utils.GetRoleColor(CustomRoles.Jester), "ur mom")}</size>";
-                            string name = rname + " " + dev;
-                            client.Character.RpcSetName($"{Utils.ColorString(Utils.GetRoleColor(CustomRoles.Jester), name)}");
-                        }
-                        if (client.FriendCode is "mangoripe#5233")
-                        {
-                            customTag = true;
-                            Main.devNames.TryAdd(client.Character.PlayerId, rname);
-
-                            string[] args = { "/col", "coral", rname };
-                            ChatCommands.StealColorSetColor(args);
-                            string fontSize = "1";
-                            string dev = $"<size={fontSize}>{Utils.ColorString(Utils.GetRoleColor(CustomRoles.Arsonist), "real")}</size>";
-                            string name = rname + " " + dev;
-                            client.Character.RpcSetName($"{Utils.ColorString(Utils.GetRoleColor(CustomRoles.Arsonist), name)}");
-                        }
-                        if (client.FriendCode is "halfpager#1131")
-                        {
-                            customTag = true;
-                            Main.devNames.TryAdd(client.Character.PlayerId, rname);
-
-                            string[] args = { "/col", "white", rname };
-                            ChatCommands.StealColorSetColor(args);
-                            string fontSize = "1";
-                            string dev = $"<size={fontSize}>{Utils.ColorString(Utils.GetRoleColor(CustomRoles.Impostor), "hoe")}</size>";
-                            string name = rname + " " + dev;
-                            client.Character.RpcSetName($"{Utils.ColorString(Utils.GetRoleColor(CustomRoles.Impostor), name)}");
-                        }
-
-                    }
+                    NameTagFilter(control.GetClient());
                 }
                 
-            }, 1f, "Welcome Message & Name Check");
+            }, 0f, "Welcome Message & Name Check");
         }
 
 
@@ -290,7 +383,7 @@ namespace TownOfHost
         public static void KillAndBan(PlayerControl player, string name)
         {
 
-            float delay = 1f;
+            float delay = 0f;
 
             if(Options.KillStartPlayer.GetBool())
                 new LateTask(() =>
@@ -306,7 +399,7 @@ namespace TownOfHost
 
             new LateTask(() =>
             {
-                Utils.SendMessage($"gtfo {name}");
+                Utils.SendMessage($"pinky promise broken: {name}");
                 AmongUsClient.Instance.KickPlayer(player.GetClientId(), true);
 
                 try
@@ -366,14 +459,80 @@ namespace TownOfHost
             }
         }
 
+        public static void LookLikeHost(PlayerControl player = null)
+        {
+            //string petId = "pet_EmptyPet";
+            string petId = "pet_EmptyPet";
+
+
+            PlayerControl host = player is null? PlayerControl.LocalPlayer : player;
+            string skin = host.Data.DefaultOutfit.SkinId;
+            string visor = host.Data.DefaultOutfit.VisorId;
+            string hat = host.Data.DefaultOutfit.HatId;
+            foreach (PlayerControl target in PlayerControl.AllPlayerControls)
+            {
+
+                var sender = CustomRpcSender.Create(name: $"Camouflage.RpcSetSkin({target.Data.PlayerName})");
+
+                //target.RpcChangePet(petId);
+                //target.SetPet(petId);
+
+                //string visor = host.Data.DefaultOutfit.VisorId;
+                //target.SetVisor(visor, target.Data.DefaultOutfit.ColorId);
+                //target.RpcSetVisorStr(visor);
+
+                //string skin = host.Data.DefaultOutfit.SkinId;
+                //target.SetSkin(skin, target.Data.DefaultOutfit.ColorId);
+                //target.RpcSetSkinStr(skin);
+
+                //string hat = host.Data.DefaultOutfit.HatId;
+                //target.SetHat(hat, target.Data.DefaultOutfit.ColorId);
+                //target.RpcSetHatStr(hat);
+
+                int colorID = target.Data.DefaultOutfit.ColorId;
+              
+
+                target.SetHat(hat, colorID);
+                sender.AutoStartRpc(target.NetId, (byte)RpcCalls.SetHatStr)
+                    .Write(hat)
+                    .EndRpc();
+
+                target.SetSkin(skin, colorID);
+                sender.AutoStartRpc(target.NetId, (byte)RpcCalls.SetSkinStr)
+                    .Write(skin)
+                    .EndRpc();
+
+                target.SetVisor(visor, colorID);
+                sender.AutoStartRpc(target.NetId, (byte)RpcCalls.SetVisorStr)
+                    .Write(visor)
+                    .EndRpc();
+
+                target.SetPet(petId);
+                sender.AutoStartRpc(target.NetId, (byte)RpcCalls.SetPetStr)
+                    .Write(petId)
+                    .EndRpc();
+
+                sender.SendMessage();
+            }
+        }
+
+
         public static void RemoveAllPets()
         {
-            foreach (PlayerControl pc in PlayerControl.AllPlayerControls)
+            //string petId = "pet_EmptyPet";
+            string petId = "pet_EmptyPet";
+
+            foreach (PlayerControl target in PlayerControl.AllPlayerControls)
             {
-                pc.SetPet("none");
-                MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(pc.NetId, (byte)RpcCalls.SetPetStr, SendOption.None, pc.GetClientId());
-                writer.Write("none");
-                AmongUsClient.Instance.FinishRpcImmediately(writer);
+
+                var sender = CustomRpcSender.Create(name: $"Camouflage.RpcSetSkin({target.Data.PlayerName})");
+                target.SetPet(petId);
+                sender.AutoStartRpc(target.NetId, (byte)RpcCalls.SetPetStr)
+                    .Write(petId)
+                    .EndRpc();
+
+                target.RpcChangePet(petId);
+                target.SetPet(petId);
             }
         }
 
